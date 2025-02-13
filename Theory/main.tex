@@ -30,7 +30,7 @@ For arbitrary enclosing SSD surfaces the Kirchhoff approximation can be applied 
 
 Assuming an arbitrary virtual field given by the general polar form
 \begin{equation}
-    P(\vx,\omega)  = A^P(\vx) \, \te^{ \ti \Phi^P(\vx)}
+    P(\vx,\omega)  = A^P(\vx) \, \te^{ \ti k \Phi^P(\vx)}
 \end{equation}
 in both cases the involved integral formulation is given by
 \begin{equation}
@@ -38,7 +38,7 @@ in both cases the involved integral formulation is given by
 \end{equation}
 with $\frac{\partial }{\partial n} P(\vxo,\omega)$ denoting the normal derivative of $P(\vx,\omega)$ taken at $\vx = \vxo$, and 
 \begin{equation}
-    G(\vx-\vxo,\omega) = A^G(\vx) \, \te^{-\ti \Phi^G(\vx)} = \frac{1}{4\pi} \frac{\te^{- \ti k |\vx-\vxo|}}{|\vx-\vxo|}
+    G(\vx-\vxo,\omega) = A^G(\vx) \, \te^{\ti k \Phi^G(\vx)} = \frac{1}{4\pi} \frac{\te^{- \ti k |\vx-\vxo|}}{|\vx-\vxo|}
 \end{equation}
 being the 3D free field Green's function, where $k = \omega/c$ being the wavenumber.
 Again, in case when surface $S$ degenerates to an infinite plane the above expression expresses the target field without any approximation involved, termed as the Rayleigh integral (I),
@@ -50,13 +50,13 @@ where $\rho_{1,2}$ are the local principal radii of the curved SSD, giving a rou
 
 For the sake of simplicity the gradient of the target field is usually approximated as
 \begin{multline}
-    \nabla_\vx  P(\vx,\omega)  = \left( \frac{\nabla_\vx A^P(\vx)}{A^P(\vx)} + \ti \nabla_\vx \Phi^P(\vx) \right)\, P(\vx,\omega) \approx 
-    \ti \nabla_\vx \Phi^P(\vx) \, P(\vx,\omega)
+    \nabla_\vx  P(\vx,\omega)  = \left( \frac{\nabla_\vx A^P(\vx)}{A^P(\vx)} + \ti k \nabla_\vx \Phi^P(\vx) \right)\, P(\vx,\omega) \approx 
+    \ti k \nabla_\vx \Phi^P(\vx) \, P(\vx,\omega)
     = \\ = \ti \vk^P(\vx) \, P(\vx,\omega).
 \end{multline}
-Where $\vk^P(\vx)$ is the local wavenumber vector, being a unit vector, pointing into the direction of the local propagation direction.
+Where $\vk^P(\vx)$ is the local wavenumber vector, pointing into the direction of the local propagation direction.
 
-Since for a homogeneous medium $|\nabla_\vx \Phi^P(\vx)| = k$ holds, the approximation is valid when 
+Since for a homogeneous medium $|\nabla_\vx \Phi^P(\vx)| = 1$ holds, the approximation is valid when 
 \begin{equation}
    \left| \frac{\nabla_\vx A^P(\vx)}{A^P(\vx)}  \right| \ll \frac{\omega}{c}
    \label{eq:HFgradientValidity}
@@ -98,172 +98,66 @@ As a result for violating low frequency requirements the amplitude of the descri
 \section{Validity of the Stationary Phase Approximation}
 
 This section discusses the general validity of the SPA in details.
-The SPA derivation follows that given in \cite[p. 114-116]{torresani1995}, giving a simlilar, but simpler SPA SPA derivation than the rigorous derivation involving stationary points on the integral endpoints \cite[Sec. 2.7, p.77]{Bleistein1984}, or \cite[Sec. 6.1, p.219.]{Blenstein1975}.
-
-First the 1D SPA formula is derived following the derivation of xy, resulting in a series expansion of oscillatory integrals around the stationary point of the integral path.
-Explicit formulae are given for the zeroth and the second (next non-zero valued) order term for the expansion, from which the zeroth is the well-known SP approximation of the integral.
-By comparing the absolute value of the zeroth and second order terms (discarding higher order terms) an explicit requirement can be formulated for the validity of the SPA.
-
-\subsection{The integral approximation}
+First the derivation of the SPA should be given, up the second non-zero term of the integral's series expansion.
+Things get pretty messy here:
+\begin{itemize}
+\item There's a pretty good derivation given in \cite[p. 114-116]{torresani1995}, yet, seems a bit sloopy.
+I made my own derivation based on this one, and shared it with you in spa\_derivation\_torresani.tex.
+\item When I asked the chatGPT, it gave me a pretty thorough derivation, however, I did not find it in the Bleistein books in its form.
+Maybe I should do more research on it. 
+I should also redo this derivation to make sure it did not make any mistakes... Yet, it's a bit complicated. 
+You can find it in spa\_derivation\_chatGPT.tex.
+\end{itemize}
+Anyways, the two derivations give very similar results, aparts from a scaling factor of 24 instead of 2 for the second term of the expansion.
+Since the one given by the GPT (with the scaling factor of 2) perfectly gives me the -3dB cutoff frequency in numerical comparisons (see the next section) I tend to belive this one :).
+Therefore, according to our virtual friend, the stationary phase approximation up to the second term goes like this:
 
 Assume that we have an oscillatory integral in the general form
 \begin{equation}
-    I = \int_{-\infty}^{\infty} A(z) \te^{ \ti \Phi(z) }  \td z.
+    I = \int_{-\infty}^{\infty} A(z) \te^{ \ti k \Phi(z) }  \td z.
 \end{equation}
 It is assumed that there exist a single critical point in the integral path for which
 \begin{equation}
     \Phi'(z^*) = 0, \hspace{1cm} \text{and} \hspace{1cm} \Phi''(z^*) \neq 0,
 \end{equation}
 with $z^*$ termed as the stationary position. 
-%For the sake of simplicity it is assumed that $\Phi''(z^*) > $ which can be shown to hold for the present use case.
-
-The main idea of the stationary phase approximation is the following: as long as the phase heavily oscillates around the stationary position, while the amplitude changes slowly compared to the phase, most of the oscillation cancels out in the integral and the integral is dominated by the promixity of the stationary point.
-Therefore, the integral can be approximated by the integrand's stationary value along with a correction term.
-
-\paragraph{Change of variables}
-Formally, the integral is transformed into a canonic form by a change of variables
-\begin{equation}
-u^2 = -\ti (\Phi(z) - \Phi(z^*))
-\label{eq:u_def}
-\end{equation}
-thus at the stationary position $u=0$ holds.
-Without any approximation involved, the integral is written in the form
-\begin{equation}
-    I = \te^{ \ti \Phi(z^*) } \int_{0}^{\infty} A(z(u))\frac{\td z(u)}{\td u}  \te^{ -u^2 }  \td u.
-\end{equation}
-
-\paragraph{Expression for $z(u)$:}
-The phase function can be approximated by its Taylor series around $z^*$ as
-\begin{equation}
-     \Phi(z) \approx \Phi(z^*) + \frac{1}{2}\Phi''(z^*) (z-z^*)^2 + O((z-z^*)^4)
-\end{equation}
-Therefore
-\begin{equation}
-    u^2 = -\ti \frac{\Phi''(z^*)}{2} (z-z^*)^2 + O((z-z^*)^4)
-\end{equation}
-This later equation can be inverted to give an approximation to $z(u)$ as
-\begin{equation}
-   z =   z^* + \sqrt{ \frac{2}{ \Phi''(z^*)} }\te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*)) }  u + O(u^2).
-\end{equation}
-Yet, in the involved differentition later, the implicit definition \eqref{eq:u_def} is differentiated
-
-\paragraph{Taylor's expansion of the amplitude term}
-As a next step the amplitude of the integrand is expanded into a Maclaurin series around $u_0 = 0$
-\begin{equation}
-    A_u(u) = A(z(u))\frac{\td z(u)}{\td u} \approx \sum_{k} \frac{A_u^{(k)}(0)}{k!} \, u^k
-    \label{eq:ATaylor}
-\end{equation}
-with $A^{(k)}_u(0)$ denoting the $k$-th derivative of $A_u(u)$ taken at $u=0$, resulting in the integral 
-\begin{equation}
-    I = \te^{ \ti \Phi(z^*) } \sum_{k} \frac{A_u^{(k)}(0)}{k!} \int_{0}^{\infty}  u^k \, \te^{ -u^2 }  \td u.
-\end{equation}
-In the series all the odd terms equal to zero, therefore, we are interested only in even terms (TODO: Why? Also, for even terms the integral is doubled. Proper integral endpoints are required to be defined).
-By definition of the Gamma function
-\begin{equation}
-    \small
-    \Gamma(k) = \int_{0}^{\infty}  u^{k-1} \, \te^{ -u }  \td u  = 
-    2\int_{0}^{\infty}  u^{2k-1} \, \te^{ -u^2 }  \td u 
-    \hspace{3mm} \rightarrow \hspace{3mm}
-    \int_{0}^{\infty}  u^k \, \te^{ -u^2 }  \td u= \frac{1}{2}\Gamma(\frac{k+1}{2}) 
-\end{equation}
-\begin{equation}
-    I = \te^{ \ti \Phi(z^*) } \sum_{k} \frac{A_u^{(k)}(0)}{k!} \Gamma(\frac{k+1}{2}).
-\end{equation}
-Thus, in order to appoximate the integral up to the $k.$, one has to express the derivatives $A_u^{(k)}(u)$ and evaluate it at the stationary position.
-The methodology is given as follows:
-\begin{itemize}
-    \item The derivatives of $A_u^{(k)}(u) = \frac{\td^k}{\td u^k}\left( A(z(u))\frac{\td z(u)}{\td u} \right)$ in \eqref{eq:ATaylor} can be expressed by the consequent application of the chain rule.
-    This results in an expression for the $k$-th derivtive in terms of the derivatives of $A$, and the derivatives of $z(u)$.
-    \item This expression is further expressed in terms of the derivatives of the inverse function $z(z)$.
-    This can be done by differentiating its definition
-    \begin{equation}
-        u(z(u)) = u.  
-    \end{equation}
-    As two simple examples, from the chain rule, for the first derivative
-    \begin{align}
-        \frac{\td}{\td u} u(z(u)) = z'(u) \, u'(z) = 1, \hspace{1cm} \rightarrow \hspace{1cm} u'(z) = \frac{1}{z'(u)}
-    \end{align}
-    and for the second derivative
-    \begin{eqnarray}
-        \frac{\td}{\td u}\left( z'(u) \, u'(z(u)) \right) = 0 \\
-        z''(u) u'(z(u)) + z'(u) z'(u)  u''(z(u))  = 0 \\
-         u''(z(u))  = - \frac{z''(u) u'(z(u))}{z'(u)^2 }  = -\frac{z''(u)}{z'(u)^3} 
-    \end{eqnarray}
-    are given.
-    \item Finally, derivatives of $u(z)$ are expressed by differentiating its definition \eqref{eq:u_def}.
-    Again, as two simple examples, the first derivative is given as
-    \begin{eqnarray}
-        \frac{\partial}{\partial z} u(z) = \frac{\partial}{\partial z} \sqrt{-\ti (\Phi(z) - \Phi(z^*))} = \te^{-\ti\frac{\pi}{4}} \frac{\partial}{\partial z} \sqrt{\Phi(z) - \Phi(z^*)}
-    \end{eqnarray}
-    TODO: how does it go on?
-\end{itemize}
-        
-\paragraph{Zeroth term of the integral:}
-For the zeroth term the amplitude factor taken at the stationary point $u=0$ is given as
-\begin{equation}
-    A_u(0) = \sqrt{2}\frac{A(z^*)}{\left| \Phi''(z^*) \right|^{1/2}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))},
-\end{equation}
-and the zeroth term of the integral expansion is given by
-\begin{equation}
-    I_0 = \sqrt{\frac{2 \pi}{\left| \Phi''(z^*) \right|}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))} \, A(z^*) \te^{ \ti \Phi(z^*) }.
-\end{equation}
-This leading term is referred to as the stationary phase approximation of the integral, used frequently in the field of acoustics, optics and seismology.
-When applied for wave phenomena the approximation consitutes the backbone of ray theory.
-
-\paragraph{Second term of the integral:}
-For the second term the required derivative is given by
-\begin{equation}
-    \small
-    A^{(2)}_u(u) = \frac{\partial^2}{\partial u^2} A(z(u))\frac{\td z(u)}{\td u} = A''(z(u)) (z'(u))^3 + 3A'(z(u)) \, z'(u) \,z''(u) + A(z(u)) z'''(u).
-\end{equation}
-which can be expressed in term of $u'(z)$ as
-\begin{equation}
-    A^{(2)}_u(u) = \frac{ A''(z) (u'(z))^2 - 3 A'(z)u''(z) u'(z) - A(z)\left( u'''(z) u'(z)- 3u''(z)^2 \right) 
-    }{u'(z)^5}.
-\end{equation}
-In the stationary position this term is given by
+By expanding both the amplitude and phase into Taylor's series, introducing new variable in order to transform the integral to a Gaussian one, and performing integration the result of integration is given by
 \begin{multline}
-    \small
-    A^{(2)}_u(0) = 2 \sqrt{2} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*) |\Phi''(z^*)|^{3/2}}(
-    A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + \\
-    + \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
-    )
-\end{multline}
-and the second term in the integral is given by
-\begin{multline}
-    \small
-    I_2 = \frac{\sqrt{2\pi}}{24} \te^{\ti \Phi(z^*)} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*)^2 |\Phi''(z^*)|^{3/2}}(
-    A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + \\
-    + \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
-    )
+    \label{eq:result}
+    \footnotesize
+    I(k)\sim\,  \te^{\ti k \Phi(z^*)}\sqrt{\frac{2\pi}{k|\Phi''(z^*)|}}\,\te^{\ti\frac{\pi}{4}\,\sgn\Phi''(z^*)} \\
+    \quad \times \Biggl\{ A(z^*) + \frac{1}{k}\left[\frac{A''(z^*)}{2\Phi''(z^*)}
+    -\frac{A(z^*)\Phi^{(4)}(z^*)}{8\left(\Phi''(z^*)\right)^2}+\frac{5A(z^*)\bigl(\Phi^{(3)}(z^*)\bigr)^2}
+    {24\left(\Phi''(z^*)\right)^3}\right] + O\Bigl(\lambda^{-2}\Bigr) \Biggr\}.
 \end{multline}
 
 \paragraph{Validity of the approximation}
-As a simple estimation of the limit of the SPA's validity one may require that the leading term should dominate in the integral approximation, i.e. $|I_0| \gg |I_2|$ should hold
-This yields 
+In order to estimate the lower limit for the SPA's validity one may require that the leading term should dominate in the integral approximation, i.e. $|I_0| \gg |I_2|$ should hold.
+From \eqref{eq:result}
 \begin{equation}
     \scriptsize
-    \frac{|I_2|}{|I_0|} = \frac{\left|\frac{\sqrt{2\pi}}{24} \te^{\ti \Phi(z^*)} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*)^2 |\Phi''(z^*)|^{3/2}}(
-        A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + 
-        \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
-        )\right|}{\left|
-            \sqrt{\frac{2 \pi}{\left| \Phi''(z^*) \right|}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))} \, A(z^*) \te^{ \ti \Phi(z^*) }
-        \right|} \ll 1,
+    \frac{|I_2|}{|I_0|} =
+    \frac{\left| \frac{A''(z^*)}{2\Phi''(z^*)}
+    -\frac{A(z^*)\Phi^{(4)}(z^*)}{8\left(\Phi''(z^*)\right)^2}+\frac{5A(z^*)\bigl(\Phi^{(3)}(z^*)\bigr)^2}
+    {24\left(\Phi''(z^*)\right)^3}\right|}
+    {|A(z^*)|}
+    \ll k,
 \end{equation}
 which can be simplified as
 \begin{equation}
-    \scriptsize
-    \frac{|I_2|}{|I_0|} = \frac{1}{24} \frac{1}{\left|A(z^*) \right| |\Phi''(z^*)|^3 } \left|
-        A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + 
-        \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*)  \right) \right|
-         \ll 1
-        \label{eq:SPAvalidity}
+    \frac{1}{2}
+    \left| \frac{A''(z^*)}{A(z^*) \Phi''(z^*)}
+    -\frac{1}{4}\frac{\Phi^{(4)}(z^*)}{\Phi''(z^*)^2}+\frac{5}{12}\frac{\Phi^{(3)}(z^*)^2}
+    {\Phi''(z^*)^3}\right|
+    \ll k,
+            \label{eq:SPAvalidity}
 \end{equation}
-This equation is fairly complicated, however, in applications it can be significantly simplified, as discussed in the next section.
+Furthermore 
 
 \section{Application for the Rayleigh integral}
 
-In order to isolate the effect of the SPA from other high frequency assumptions the Rayleigh integral is investigated, by assuming an infinite plane of integration over the $xz$ plane:
+\subsection{The integral under consideration}
+In order to isolate the effect of the SPA from other high frequency assumptions the Rayleigh integral is investigated, by assuming an infinite plane of integration over the $x_0z_0$ plane:
 \begin{multline}
     P(\vx,\omega) = - \iint_{-\infty}^{\infty}  2 \frac{\partial}{\partial y} P(\vxo,\omega) \, G(\vx-\vxo,\omega) \, \td x_0 \td z_0 \approx
     \\ \approx \iint_{-\infty}^{\infty}  2 k_y(\vxo) P(\vxo,\omega) \, G(\vx-\vxo,\omega) \, \td x_0 \td z_0,
@@ -272,15 +166,15 @@ In order to isolate the effect of the SPA from other high frequency assumptions 
 or written in the polar form
 \begin{multline}
     \scriptsize
-    P(\vx,\omega) \approx 2 \iint_{-\infty}^{\infty}  \underbrace{ \ti k_y(\vxo) A^P(\vxo) A^G(\vx-\vxo)}_{A(\vx,\vxo)} 
-    \te^{-\ti k \overbrace{ \left( \Phi^P(\vxo) + \Phi^G(\vx-\vxo)\right)}^{\Phi(\vx,\vxo)} } \, \td x_0 \td z_0,
+    P(\vx,\omega) \approx 2 \iint_{-\infty}^{\infty}  \underbrace{ \ti k_y(\vxo) A^P(\vxo) A^G(\vx-\vxo)}_{A(\vxo)} 
+    \te^{-\ti k \overbrace{ \left( \Phi^P(\vxo) + \Phi^G(\vx-\vxo)\right)}^{\Phi(\vxo)} } \, \td x_0 \td z_0,
     \label{eq:RayleighPolar}
 \end{multline}
 Note that the high-frequency gradient approximation is still applied in order consider only the frequency dependent term in the amplitude, which will help us later to formulate the frequency bound for the SPA validity.
 It can be shown that the yielded high frequency limit constitutes a more strict upper frequency bound, than the validity of the gradient approximation given by \eqref{eq:HFgradientValidity}, justifying this decision.
 
 Our aim is to reduce the surface integral along the vertical dimension into a line integral along $x_0$, by performing a stationary phase approximation along $z_0$.
-First the further assumptions in the present application are discussed allowing the significan simpliciation of the validity condition, given by \eqref{eq:SPAvalidity}.
+%First the further assumptions in the present application are discussed allowing the significan simpliciation of the validity condition, given by \eqref{eq:SPAvalidity}.
 
 \subsection{Cutoff frequency for the vertical Rayleigh integral:}
 As already stated, we restrict our investigation to the horizontal plane $z = 0$ and we assume that in the plane of investigation the target field propagates horizontally, i.e. $k_z^P(x,y,0) = 0$ holds.
@@ -288,90 +182,32 @@ As a result the stationary position is identically found at $z_0^* = 0$, indepen
 Also, since the field does not propagate into the vertical direction it is ensured that $A'(x_0,y_0,0) = 0$.
 Finally, we assume that the source distribution generating the target field is located in the plane of investigation ($z=0$), which results in an even phase function, for which odd derivatives is zero.
 These properties also hold for the Green's function.
-Therefore, for the amplitude and phase function present in \eqref{eq:RayleighPolar2} (with discarding the constant multiplier, which choice will be discussed later)
+Therefore, for the amplitude and phase function 
 \begin{equation}
-    A'(z*) = 0, \hspace{1cm} \Phi'''(z*) = 0
-\end{equation}
-where $\vx^* = [x,y,0]^{\mathrm{T}}$, $\vxo^* = [x_0,y = 0,0]^{\mathrm{T}}$.
-With these considerations the validity of SPA \eqref{eq:SPAvalidity} simplifies to
-\begin{equation}
-    \frac{|I_2|}{|I_0|} = \frac{1}{ \left| A(z^*) \right| |\Phi''(z^*)|^3 } \left|
-        A''(z^*) \Phi''(z^*)^2  - 
-        \frac{A(z^*) \Phi''''(z^*)\Phi''(z^*)}{4}
-        \right| \ll 1
-        \label{eq:RayleighSPAvalidity}
-\end{equation}
-In the present case the amplitude is obviously non-negative.
-Furthermore, we restrict our investigation only for diverging wave fields for which $\Phi'' < 0$ \footnote{This assumption does not exclude the description of focused source, but that means that the receiver position is in front of the virtual source, where the wavefronts already diverge from the focus point.}, therefore,
-\begin{equation}
-    \frac{|I_2|}{|I_0|} = \left|
-      \frac{A''(z^*) \Phi''(z^*)^2 }{ A(z^*) |\Phi''(z^*)|^3 }    
-        - 
-        \frac{A(z^*) \Phi''''(z^*)\Phi''(z^*)}{4 A(z^*) |\Phi''(z^*)|^3}
-        \right| \ll 1
-\end{equation}
-and
-\begin{equation}
-    \frac{|I_2|}{|I_0|} = \left|
-      \frac{A''(z^*) }{ A(z^*) |\Phi''(z^*)| }    
-        +
-        \frac{1}{4}\frac{ \Phi''''(z^*)}{ |\Phi''(z^*)|^2}
-        \right| \ll 1
-        \label{eq:RayleighSPAvalidity}
-\end{equation}
-can be written.
-The first term expresses the fact that in order the oscillations to cancel out it is required that the relative curvature of the amplitude distribution should be significantly smaller, than the curvature of the phase function.
-Since the phase can be written in the form $\Phi(\vx) = \frac{\omega}{c} \hat{\Phi}(\vx)$ 
-The above validity criterium is expressed in terms of the angular frequency as
-\begin{equation}
-    \left| \frac{A''(z^*) }{ A(z^*) |\hat{\Phi}''(z^*)| }    
-        + \frac{1}{4}\frac{ \hat{\Phi}''''(z^*)}{ |\hat{\Phi}''(z^*)|^2} \right|
- \ll \frac{\omega}{c}.
-        \label{eq:RayleighSPAvalidity}
-\end{equation}
-
-When the SPA is applied to the Rayleigh integral, to transform the planar integral ($x_0,z_0$ plane) into a line integral along the $x_0$ axis, this criterium gives an approximation on the lower freuqency limit for the SPA \emph{for each linear SSD element} $\omega_0(x_0)$.
-The resulting line integral reads as
-\begin{multline}
-    \small
-    P(x,y,\omega) \approx 2 \int_{-\infty}^{\infty} \sqrt{\frac{2\pi}{\ti |F \Phi^P(\vxo) + \Phi^G(\vx-\vxo)|}} \\ 
-    \ti k_y(x_0,y_0,0) P(x_0,y_0,0) \, G(x-x_0,y-y_0,0) \, \td x_0.
-    \label{eq:RayleighPolar2}
-\end{multline}
-For each element the approximation is valid as long as 
-\begin{equation}
-    \omega_0(x_0) = c 
-    \left| \frac{A''(x_0,y_0,0) }{ A(x_0,y_0,0) |\hat{\Phi}''(x_0,y_0,0)| }    
-        + 
-        \frac{1}{4}\frac{ \hat{\Phi}''''(x_0,y_0,0)}{ |\hat{\Phi}''(x_0,y_0,0)|^2} \right| 
-        \label{eq:Kirchhoffcutoff}
+    A'(z^*) = 0, \hspace{1cm} \Phi^{(3)}(z^*) = 0
 \end{equation}
 holds.
-
-Obivously, we require a single cutoff frequency, that describes the validity of the Rayleigh integral for a given receiver position.
-It is known that the above line integral is dominated by one certain SSD element at $x_0^*$, which is the stationary point for a given receiver position.
-Hence, it is a feasible (yet rather educated) choice to take the lower cutoff frequency of the stationary SSD element for the overall lower frequency limit of the Rayleigh integral:
+With these considerations the validity of SPA \eqref{eq:SPAvalidity} simplifies to
 \begin{equation}
-    \omega_{\text{cutoff}} = \omega_0(x_0^*)
+    \frac{1}{2}
+    \left| \frac{A''(z^*)}{A(z^*) \Phi''(z^*)}
+    -\frac{1}{4}\frac{\Phi^{(4)}(z^*)}{\Phi''(z^*)^2}\right|
+    \ll k,
+            \label{eq:RayleighValidity}
 \end{equation}
-where the dependency of $x_0^*$ over $\vx$ and the virtual field model is not denoted explicitly.
-        
+The first term expresses the fact that in order the oscillations to cancel out it is required that the relative curvature of the amplitude distribution should be significantly smaller, than the curvature of the phase function.
+As the cutoff frequency of the approximation in the following we consider the limiting case of equality in \eqref{eq:SPAvalidity} which we define as the -3dB cutoff point of the approximation.
 
-\subsection{Application for a virtual point source}
+\paragraph{Application for a virtual point source}
 
-\paragraph{Cutoff frequencies over the SSD}
 For a virtual point source located at $\vxs = [x_s,y_s, 0]^{\mathrm{T}}$ the local wavenumber vector is given by $k_y(x_0,y_0) = k\frac{y_0-y_s}{|\vxo-\vxs|}$ the involved Rayleigh integral reads as
 \begin{equation}
-    P(\vx,\omega) \approx -\frac{2 \ti k}{(4 \pi)^2} (y_0-y_s)\iint_{-\infty}^{\infty} \frac{1}{|\vxo-\vxs|} \frac{\te^{-\ti F k |\vxo-\vxs|}}{|\vxo-\vxs|} \frac{\te^{-\ti k |\vx-\vxo|}}{|\vx-\vxo|} \, \td x_0 \td z_0
+    \small
+    P(\vx,\omega) \approx -\frac{2 \ti k}{(4 \pi)^2} (y_0-y_s)\iint_{-\infty}^{\infty} \frac{1}{|\vxo-\vxs|^2 |\vx-\vxo|} \te^{-\ti k \left(F |\vxo-\vxs| + |\vx-\vxo| \right)}  \, \td x_0 \td z_0
 \end{equation}
 where $F = \sgn(y_0-y_s)$ accounts for the description of focused point sources, i.e. sources located in front of the SSD.
-The phase function and the amplitude function for the SPA is, therefore, given as
-\begin{align}
-    A(x_0) &= \frac{1}{|\vxo-\vxs|^2} \, \frac{1}{|\vx-\vxo|} \\
-     \hat{\Phi}(x_0) &= - ( F |\vxo-\vxs| + |\vx-\vxo|)
-\end{align}
-Again, due to problem geometry the vertical stationary position is identically found at $z_0 = 0$.
-For the sake of simplicity in the following for the in-plane distances, and the corresponding curvatures are denoted as
+
+For the sake of simplicity in the followings the in-plane distances, and the corresponding curvatures are denoted as
 \begin{align}
 r_P(x_0) &= \sqrt{(x_0 - x_s)^2 +(y_0 - y_s)^2 }\\  
 r_G(x_0) &= \sqrt{(x - x_0)^2 +(y - y_0)^2 } \\
@@ -381,12 +217,12 @@ r_G(x_0) &= \sqrt{(x - x_0)^2 +(y - y_0)^2 } \\
 The required derivatives in the stationary position ($z_0^* = 0$), without denoting $x_0$-dependency read as
 \begin{align}
     A''(x_0,0) &=  - 2\kappa_P^4\kappa_G - \kappa_P^2 \kappa_G^3 \\  
-    \hat{\Phi}''(x_0,0) &=  - \left( F \kappa_P + \kappa_G \right)\\
-    \hat{\Phi}''''(x_0,0) &= 3 (    F\kappa_P^3 + \kappa_G^3) \\
-    \frac{A''(x_0,0)}{A(x_0,0) \, |\hat{\Phi}''(x_0,0)| } &= - \frac{2 \kappa_P^2 + \kappa_G^2}{F\kappa_P + \kappa_G} \\
-    \frac{\Phi'''(x_0,0)}{|\hat{\Phi}''(x_0,0)|^2 } &= 3\frac{F \kappa_P^3 + \kappa_G^3}{(F\kappa_P + \kappa_G)^2}
+    \Phi''(x_0,0) &=  - \left( F \kappa_P + \kappa_G \right)\\
+    \Phi^{(4)}(x_0,0) &= 3 (    F\kappa_P^3 + \kappa_G^3) \\
+    \frac{A''(x_0,0)}{A(x_0,0) \, \hat{\Phi}''(x_0,0) } &= - \frac{2 \kappa_P^2 + \kappa_G^2}{F\kappa_P + \kappa_G} \\
+    \frac{\Phi^{(3)}(x_0,0)}{|\Phi''(x_0,0)|^2 } &= 3\frac{F \kappa_P^3 + \kappa_G^3}{(F\kappa_P + \kappa_G)^2}
 \end{align}
-and the lower frequency limit from \eqref{eq:Kirchhoffcutoff} assigning a unique cut-off frequency to each SSD element reads as
+and the lower frequency limit from \eqref{eq:RayleighValidity} assigning a unique cut-off frequency to each SSD element reads as
 \begin{equation}
     \omega_0(x_0) = c \left| \frac{2 \kappa_P(x_0)^2 + \kappa_G(x_0)^2}{F\kappa_P(x_0) + \kappa_G(x_0)}
     -
@@ -399,19 +235,86 @@ and the lower frequency limit from \eqref{eq:Kirchhoffcutoff} assigning a unique
 In order to validate the analytical results given by \eqref{eq:PScutoff} we are able to compare the analytical cutoff frequency by comparing the result of vertical SPA with the actual numerical integration results for each SSD element.
 The methodology is given as follows:
 \begin{itemize}
-%    \item As seen in the foregoing the cutoff frequency is dependent upon the virtual source position $\vxs$ and the receiver position $\vx$.
-%    Therefore, comparison can be give with a fixed virtual source position / receiver position.
-%    \item \eqref{eq:PScutoff} allows one to estimate the cut-off frequency for each SSD element under test
     \item The vertical line integral for each SSD element can be evaluted numerically, for the sake of simplicity by using the trapezoid rule, serving as a ground-truth. 
     This results in an integral value for each frequency bin
     \begin{equation}
         I(x_0,\omega) = \sqrt{\omega} \int_{-\infty}^{\infty} \frac{\te^{-\ti \frac{\omega}{c} \left( F k |\vxo-\vxs| + |\vx-\vxo|\right) }}{|\vxo-\vxs|^2 \, |\vx-\vxo|} \td z_0
     \end{equation}
-    Term $\sqrt{\omega}$ is left in the integral in order to ensure a flat function above the lower cutoff frequency, merely in the favour of improved vizualization.
-    \item The vertical line integral can be also approximated by the SPA, resulting again in an integral value for each frequency bin
-    \item These frequency and $x_0$ dependent values can be compared. In the low frequency region the numerical integration result exhibits a -10dB/decade 
+    The term $\sqrt{\omega}$ is left in the integral in order to ensure a flat function above the lower cutoff frequency, merely in the favour of improved vizualization.
+    \item The vertical line integral can be also approximated by the SPA, resulting again in an integral value for each frequency bin.
+    \item These frequency responses can be compared, and the point where the relative error drops below -3 dB can be estimated numerically. This latter can be compared with the analytical frequency limit given by \eqref{eq:PScutoff}.
 \end{itemize}
+In the following the integral and its approximation are compared in three different configurations. Furthermore, the estimated and measured cutoff frequencies are compared as the function of $x_0$.
+\begin{figure}[]
+	\centering
+	\begin{overpic}[width = .35\columnwidth ]{figures/setup_1.png}
+	\small
+	\put(0,0){(a)}
+	\end{overpic}    
+    \begin{overpic}[width = .35\columnwidth ]{figures/integral_comparison_setup1.png}
+        \small
+        \put(0,0){(b)}
+        \end{overpic}
+    \\ \vspace{3mm}
+     \begin{overpic}[width = .78\columnwidth ]{figures/cutoff_comparison_setup1.png}
+            \small
+            \put(0,0){(c)}
+            \end{overpic}
+	\caption{Rayleigh integral for the sound field of a point source at $\vxs = [0,\, -1,\, 0]^{\mathrm{T}}$, $\vx = [0,\, 1,\, 0]^{\mathrm{T}}$}.
+	\label{fig:setup1}
+\end{figure}
     
+\begin{figure}[]
+	\centering
+	\begin{overpic}[width = .35\columnwidth ]{figures/setup_2.png}
+	\small
+	\put(0,0){(a)}
+	\end{overpic}    
+    \begin{overpic}[width = .35\columnwidth ]{figures/integral_comparison_setup2.png}
+        \small
+        \put(0,0){(b)}
+        \end{overpic}
+    \\ \vspace{3mm}
+     \begin{overpic}[width = .7\columnwidth ]{figures/cutoff_comparison_setup2.png}
+            \small
+            \put(0,0){(c)}
+            \end{overpic}
+            \caption{Rayleigh integral for the sound field of a point source at $\vxs = [-1,\, -0.11,\, 0]^{\mathrm{T}}$, $\vx = [1,\, 0.1,\, 0]^{\mathrm{T}}$}.
+            \label{fig:setup2}
+\end{figure}
+\begin{figure}[]
+	\centering
+	\begin{overpic}[width = .35\columnwidth ]{figures/setup_3.png}
+	\small
+	\put(0,0){(a)}
+	\end{overpic}    
+    \begin{overpic}[width = .35\columnwidth ]{figures/integral_comparison_setup3.png}
+        \small
+        \put(0,0){(b)}
+        \end{overpic}
+    \\ \vspace{3mm}
+     \begin{overpic}[width = .7\columnwidth ]{figures/cutoff_comparison_setup3.png}
+            \small
+            \put(0,0){(c)}
+            \end{overpic}
+            \caption{Rayleigh integral for the sound field of a point source at $\vxs = [0,\, 0.5,\, 0]^{\mathrm{T}}$, $\vx = [0,\, 1,\, 0]^{\mathrm{T}}$}
+       \label{fig:setup3}
+\end{figure}
+Figure \ref{fig:setup1} investigates the most simple case of a point source behind the Rayleigh plane, evaluated in front of the source (same $x$ position) by the Rayleigh integral.
+Figure \ref{fig:setup2} shows the more degenerated case of a point source very close to the Rayleigh plane, with the evaluation point being also very close, laterally away from the source.
+Finally \ref{fig:setup3} shows the case of a focused source.
+In each cases Figure (a) shows the geometry under consideration, Figure (b) shows the vertical integrals at $x_0 = 0$, while Figure (c) depicts the estimated cutoff frequency along the $x_0$ axis.
+
+It is highlighted that for unfocused sources the analytical cutoff frequency \eqref{eq:PScutoff} gives a very good approximation of the cutoff-frequency in each SSD position.
+On the other hand for focused sources apart from position in front of the virtual source, large deviations occurs.
+This should be investigated that this disceprancy is due to that higher order terms in the SPA also arise significantly in case of focused sources, or I miscalculated something :).
+Both explanations may be valid, as when the source gets in front of the SSD the amplitude factor is the very same as it would be if it was located behind the SSD with the same absolute $y_0$ coordinate, but since the phases are subtracted from each other, the phase derivative decrease significantly and SPA does not hold well.
+On the other hand I miscalculate things very easily....
+
+Figure \ref{fig:setup3} also dontains some insight to the mechanism of the SPA: Nara asked me in the conference call, what may be the reason behind the apparent ripple in case of focused source WFS.
+Apparently, this ripple is alread present in the vertical SPA, so this may be an inherent error of the ray-based approximation. 
+Maybe it should worth further discussion.
+
 \section{Application for the Kirchhoff approximation}
 
 \bibliographystyle{unsrt}

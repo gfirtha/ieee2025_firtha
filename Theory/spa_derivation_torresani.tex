@@ -1,0 +1,164 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{lipsum}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\usepackage{xcolor}
+\input{scidefs}
+\begin{document}
+
+
+\subsection{The integral approximation}
+
+Assume that we have an oscillatory integral in the general form
+\begin{equation}
+    I = \int_{-\infty}^{\infty} A(z) \te^{ \ti \Phi(z) }  \td z.
+\end{equation}
+It is assumed that there exist a single critical point in the integral path for which
+\begin{equation}
+    \Phi'(z^*) = 0, \hspace{1cm} \text{and} \hspace{1cm} \Phi''(z^*) \neq 0,
+\end{equation}
+with $z^*$ termed as the stationary position. 
+%For the sake of simplicity it is assumed that $\Phi''(z^*) > $ which can be shown to hold for the present use case.
+
+The main idea of the stationary phase approximation is the following: as long as the phase heavily oscillates around the stationary position, while the amplitude changes slowly compared to the phase, most of the oscillation cancels out in the integral and the integral is dominated by the promixity of the stationary point.
+Therefore, the integral can be approximated by the integrand's stationary value along with a correction term.
+
+\paragraph{Change of variables}
+Formally, the integral is transformed into a canonic form by a change of variables
+\begin{equation}
+u^2 = -\ti (\Phi(z) - \Phi(z^*))
+\label{eq:u_def}
+\end{equation}
+thus at the stationary position $u=0$ holds.
+Without any approximation involved, the integral is written in the form
+\begin{equation}
+    I = \te^{ \ti \Phi(z^*) } \int_{0}^{\infty} A(z(u))\frac{\td z(u)}{\td u}  \te^{ -u^2 }  \td u.
+\end{equation}
+
+\paragraph{Expression for $z(u)$:}
+The phase function can be approximated by its Taylor series around $z^*$ as
+\begin{equation}
+     \Phi(z) \approx \Phi(z^*) + \frac{1}{2}\Phi''(z^*) (z-z^*)^2 + O((z-z^*)^4)
+\end{equation}
+Therefore
+\begin{equation}
+    u^2 = -\ti \frac{\Phi''(z^*)}{2} (z-z^*)^2 + O((z-z^*)^4)
+\end{equation}
+This later equation can be inverted to give an approximation to $z(u)$ as
+\begin{equation}
+   z =   z^* + \sqrt{ \frac{2}{ \Phi''(z^*)} }\te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*)) }  u + O(u^2).
+\end{equation}
+
+\paragraph{Taylor's expansion of the amplitude term}
+As a next step the amplitude of the integrand is expanded into a Maclaurin series around $u_0 = 0$
+\begin{equation}
+    A_u(u) = A(z(u))\frac{\td z(u)}{\td u} \approx \sum_{k} \frac{A_u^{(k)}(0)}{k!} \, u^k
+    \label{eq:ATaylor}
+\end{equation}
+with $A^{(k)}_u(0)$ denoting the $k$-th derivative of $A_u(u)$ taken at $u=0$, resulting in the integral 
+\begin{equation}
+    I = \te^{ \ti \Phi(z^*) } \sum_{k} \frac{A_u^{(k)}(0)}{k!} \int_{0}^{\infty}  u^k \, \te^{ -u^2 }  \td u.
+\end{equation}
+In the series all the odd terms equal to zero, therefore, we are interested only in even terms (\textcolor{red}{TODO: Why? Also, for even terms the integral is doubled. Proper integral endpoints are required to be defined)}.
+By definition of the Gamma function
+\begin{equation}
+    \small
+    \Gamma(k) = \int_{0}^{\infty}  u^{k-1} \, \te^{ -u }  \td u  = 
+    2\int_{0}^{\infty}  u^{2k-1} \, \te^{ -u^2 }  \td u 
+    \hspace{3mm} \rightarrow \hspace{3mm}
+    \int_{0}^{\infty}  u^k \, \te^{ -u^2 }  \td u= \frac{1}{2}\Gamma(\frac{k+1}{2}) 
+\end{equation}
+\begin{equation}
+    I = \te^{ \ti \Phi(z^*) } \sum_{k} \frac{A_u^{(k)}(0)}{k!} \Gamma(\frac{k+1}{2}).
+\end{equation}
+Thus, in order to appoximate the integral up to the $k.$, one has to express the derivatives $A_u^{(k)}(u)$ and evaluate it at the stationary position.
+The methodology is given as follows:
+\begin{itemize}
+    \item The derivatives of $A_u^{(k)}(u) = \frac{\td^k}{\td u^k}\left( A(z(u))\frac{\td z(u)}{\td u} \right)$ in \eqref{eq:ATaylor} can be expressed by the consequent application of the chain rule.
+    This results in an expression for the $k$-th derivtive in terms of the derivatives of $A$, and the derivatives of $z(u)$.
+    \item This expression is further expressed in terms of the derivatives of the inverse function $z(z)$.
+    This can be done by differentiating its definition
+    \begin{equation}
+        u(z(u)) = u.  
+    \end{equation}
+    As two simple examples, from the chain rule, for the first derivative
+    \begin{align}
+        \frac{\td}{\td u} u(z(u)) = z'(u) \, u'(z) = 1, \hspace{1cm} \rightarrow \hspace{1cm} u'(z) = \frac{1}{z'(u)}
+    \end{align}
+    and for the second derivative
+    \begin{eqnarray}
+        \frac{\td}{\td u}\left( z'(u) \, u'(z(u)) \right) = 0 \\
+        z''(u) u'(z(u)) + z'(u) z'(u)  u''(z(u))  = 0 \\
+         u''(z(u))  = - \frac{z''(u) u'(z(u))}{z'(u)^2 }  = -\frac{z''(u)}{z'(u)^3} 
+    \end{eqnarray}
+    are given.
+    \item Finally, derivatives of $u(z)$ are expressed by differentiating its definition \eqref{eq:u_def}.
+    \textcolor{red}{TODO: This comes from the Taylor's expansion of the phase function, but not it's not perfectly clear how}
+\end{itemize}
+        
+\paragraph{Zeroth term of the integral:}
+For the zeroth term the amplitude factor taken at the stationary point $u=0$ is given as
+\begin{equation}
+    A_u(0) = \sqrt{2}\frac{A(z^*)}{\left| \Phi''(z^*) \right|^{1/2}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))},
+\end{equation}
+and the zeroth term of the integral expansion is given by
+\begin{equation}
+    I_0 = \sqrt{\frac{2 \pi}{\left| \Phi''(z^*) \right|}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))} \, A(z^*) \te^{ \ti \Phi(z^*) }.
+\end{equation}
+This leading term is referred to as the stationary phase approximation of the integral, used frequently in the field of acoustics, optics and seismology.
+When applied for wave phenomena the approximation consitutes the backbone of ray theory.
+
+\paragraph{Second term of the integral:}
+For the second term the required derivative is given by
+\begin{equation}
+    \small
+    A^{(2)}_u(u) = \frac{\partial^2}{\partial u^2} A(z(u))\frac{\td z(u)}{\td u} = A''(z(u)) (z'(u))^3 + 3A'(z(u)) \, z'(u) \,z''(u) + A(z(u)) z'''(u).
+\end{equation}
+which can be expressed in term of $u'(z)$ as
+\begin{equation}
+    A^{(2)}_u(u) = \frac{ A''(z) (u'(z))^2 - 3 A'(z)u''(z) u'(z) - A(z)\left( u'''(z) u'(z)- 3u''(z)^2 \right) 
+    }{u'(z)^5}.
+\end{equation}
+In the stationary position this term is given by
+\begin{multline}
+    \small
+    A^{(2)}_u(0) = 2 \sqrt{2} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*) |\Phi''(z^*)|^{3/2}}(
+    A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + \\
+    + \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
+    )
+\end{multline}
+and the second term in the integral is given by
+\begin{multline}
+    \small
+    I_2 = \frac{\sqrt{2\pi}}{24} \te^{\ti \Phi(z^*)} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*)^2 |\Phi''(z^*)|^{3/2}}(
+    A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + \\
+    + \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
+    )
+\end{multline}
+
+
+\paragraph{Validity of the approximation}
+As a rough estimation of the limit for the SPA's validity one may require that the leading term should dominate in the integral approximation, i.e. $|I_0| \gg |I_2|$ should hold.
+This yields 
+\begin{equation}
+    \scriptsize
+    \frac{|I_2|}{|I_0|} = \frac{\left|\frac{\sqrt{2\pi}}{24} \te^{\ti \Phi(z^*)} \frac{\exp^{3\ti \frac{\pi}{4}\sgn(\Phi''(z^*)) }}{\Phi''(z^*)^2 |\Phi''(z^*)|^{3/2}}(
+        A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + 
+        \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*) \right)
+        )\right|}{\left|
+            \sqrt{\frac{2 \pi}{\left| \Phi''(z^*) \right|}} \te^{\ti \frac{\pi}{4} \sgn(\Phi''(z^*))} \, A(z^*) \te^{ \ti \Phi(z^*) }
+        \right|} \ll 1,
+\end{equation}
+which can be simplified as
+\begin{equation}
+    \scriptsize
+    \frac{|I_2|}{|I_0|} = \frac{1}{24} \frac{1}{\left|A(z^*) \right| |\Phi''(z^*)|^3 } \left|
+        A''(z^*) \Phi''(z^*)^2 - A'(z^*)\Phi'''(z^*) \Phi''(z^*) + 
+        \frac{A(z^*)}{12} \left(  5 \Phi'''(z^*)^2 -3\Phi''''(z^*)\Phi''(z^*)  \right) \right|
+         \ll 1
+        \label{eq:SPAvalidity}
+\end{equation}
+
+\end{document}

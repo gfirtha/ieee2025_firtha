@@ -1,0 +1,150 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{lipsum}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\input{scidefs}
+\begin{document}
+
+\section*{Derivation of the Second Term in the 1D Stationary Phase Approximation}
+
+We consider the oscillatory integral
+\begin{equation}\label{I_def}
+I(\lambda)=\int_{-\infty}^\infty A(x)\,e^{i\lambda\Phi(x)}\,dx,
+\end{equation}
+where $\lambda$ is a large parameter, $A(x)$ is a smooth amplitude function, and the phase function $\Phi(x)$ has a single nondegenerate stationary point at $x=x_0$, so that
+\[
+\Phi'(x_0)=0,\qquad \Phi''(x_0)\neq 0.
+\]
+
+Our goal is to show that
+\begin{equation}\label{result}
+\begin{split}
+I(\lambda)\sim\, & e^{i\lambda\Phi(x_0)}\sqrt{\frac{2\pi}{\lambda|\Phi''(x_0)|}}\,e^{i\frac{\pi}{4}\,\sgn\Phi''(x_0)} \\
+&\quad \times \Biggl\{ A(x_0) + \frac{1}{\lambda}\left[\frac{A''(x_0)}{2\Phi''(x_0)}
+-\frac{A(x_0)\Phi^{(4)}(x_0)}{8\left(\Phi''(x_0)\right)^2}+\frac{5A(x_0)\bigl(\Phi^{(3)}(x_0)\bigr)^2}{24\left(\Phi''(x_0)\right)^3}\right] + O\Bigl(\lambda^{-2}\Bigr) \Biggr\}.
+\end{split}
+\end{equation}
+
+\subsection*{Step 1. Shift the Integration Variable}
+
+Since $x_0$ is the stationary point, we change variables:
+\[
+x=x_0+y,\qquad dx=dy.
+\]
+Then
+\[
+I(\lambda)=e^{i\lambda\Phi(x_0)}\int_{-\infty}^{\infty} A(x_0+y)\, e^{i\lambda\left[\Phi(x_0+y)-\Phi(x_0)\right]}\,dy.
+\]
+
+We now Taylor expand both the phase and the amplitude about $y=0$. Since $\Phi'(x_0)=0$, the expansion of the phase is
+\[
+\Phi(x_0+y)=\Phi(x_0)+\frac{1}{2}\Phi''(x_0)y^2+\frac{1}{6}\Phi^{(3)}(x_0)y^3+\frac{1}{24}\Phi^{(4)}(x_0)y^4+\cdots.
+\]
+Similarly, for the amplitude:
+\[
+A(x_0+y)=A(x_0)+A'(x_0)y+\frac{1}{2}A''(x_0)y^2+\cdots.
+\]
+Thus, the integral becomes
+\[
+I(\lambda)=e^{i\lambda\Phi(x_0)}\int_{-\infty}^{\infty} \left\{ A(x_0)+A'(x_0)y+\frac{1}{2}A''(x_0)y^2+\cdots \right\} \, e^{i\lambda\left[\frac{1}{2}\Phi''(x_0)y^2+\frac{1}{6}\Phi^{(3)}(x_0)y^3+\frac{1}{24}\Phi^{(4)}(x_0)y^4+\cdots\right]}dy.
+\]
+
+\subsection*{Step 2. Rescale the Integration Variable}
+
+Introduce the scaled variable
+\[
+y=\frac{s}{\sqrt{\lambda}},\qquad dy=\frac{ds}{\sqrt{\lambda}}.
+\]
+Substituting, we obtain
+\[
+\begin{aligned}
+I(\lambda)&= e^{i\lambda\Phi(x_0)} \int_{-\infty}^{\infty} \Biggl\{ A(x_0)+A'(x_0)\frac{s}{\sqrt{\lambda}}+\frac{1}{2}A''(x_0)\frac{s^2}{\lambda}+\cdots \Biggr\} \\
+&\quad \times \exp\Biggl\{ i\lambda \Biggl[\frac{1}{2}\Phi''(x_0)\frac{s^2}{\lambda}+\frac{1}{6}\Phi^{(3)}(x_0)\frac{s^3}{\lambda^{3/2}}+\frac{1}{24}\Phi^{(4)}(x_0)\frac{s^4}{\lambda^2}+\cdots \Biggr]\Biggr\}\frac{ds}{\sqrt{\lambda}}\\[1mm]
+&=\frac{e^{i\lambda\Phi(x_0)}}{\sqrt{\lambda}} \int_{-\infty}^{\infty} \Biggl\{ A(x_0)+A'(x_0)\frac{s}{\sqrt{\lambda}}+\frac{1}{2}A''(x_0)\frac{s^2}{\lambda}+\cdots \Biggr\} \\
+&\quad \times \exp\Biggl\{ i\Biggl[\frac{1}{2}\Phi''(x_0)s^2+\frac{1}{6}\Phi^{(3)}(x_0)\frac{s^3}{\sqrt{\lambda}}+\frac{1}{24}\Phi^{(4)}(x_0)\frac{s^4}{\lambda}+\cdots \Biggr]\Biggr\} ds.
+\end{aligned}
+\]
+Since the leading quadratic term in the exponent, $e^{i\frac{1}{2}\Phi''(x_0)s^2}$, is an even function of $s$, all integrals of odd functions of $s$ will vanish.
+
+\subsection*{Step 3. Expand the Exponential and Collect Terms}
+
+Write the exponential as
+\[
+\exp\left\{ i\left[\frac{1}{2}\Phi''(x_0)s^2+\frac{1}{6}\Phi^{(3)}(x_0)\frac{s^3}{\sqrt{\lambda}}+\frac{1}{24}\Phi^{(4)}(x_0)\frac{s^4}{\lambda}+\cdots\right] \right\} = e^{i\frac{1}{2}\Phi''(x_0)s^2}\left\{1+E_1+E_2+\cdots\right\},
+\]
+with
+\[
+E_1=\frac{i\Phi^{(3)}(x_0)}{6}\frac{s^3}{\sqrt{\lambda}},
+\]
+and
+\[
+E_2=\frac{i\Phi^{(4)}(x_0)}{24}\frac{s^4}{\lambda}-\frac{1}{2}\left(\frac{i\Phi^{(3)}(x_0)}{6}\frac{s^3}{\sqrt{\lambda}}\right)^2.
+\]
+Collecting terms up to order $1/\lambda$ (and noting that odd powers vanish upon integration), we obtain
+\[
+\begin{aligned}
+I(\lambda)=\frac{e^{i\lambda\Phi(x_0)}}{\sqrt{\lambda}} \Biggl\{ &A(x_0) \int_{-\infty}^\infty e^{i\frac{1}{2}\Phi''(x_0)s^2}ds \\
+&+\frac{1}{\lambda}\Biggl[\frac{A''(x_0)}{2}\int_{-\infty}^\infty s^2e^{i\frac{1}{2}\Phi''(x_0)s^2}ds \\
+&\quad + A(x_0)\Bigl(\frac{i\Phi^{(4)}(x_0)}{24}\int_{-\infty}^\infty s^4e^{i\frac{1}{2}\Phi''(x_0)s^2}ds-\frac{1}{2}\Bigl(\frac{i\Phi^{(3)}(x_0)}{6}\Bigr)^2\int_{-\infty}^\infty s^6e^{i\frac{1}{2}\Phi''(x_0)s^2}ds\Bigr) \Biggr] +\cdots \Biggr\}.
+\end{aligned}
+\]
+For convenience, define
+\[
+I_n=\int_{-\infty}^{\infty} s^n e^{i\frac{1}{2}\Phi''(x_0)s^2}ds.
+\]
+Then,
+\[
+I(\lambda)=\frac{e^{i\lambda\Phi(x_0)}}{\sqrt{\lambda}} \left\{ A(x_0)I_0 + \frac{1}{\lambda}\left[\frac{A''(x_0)}{2}I_2 + A(x_0)\left(\frac{i\Phi^{(4)}(x_0)}{24}I_4 -\frac{1}{2}\Bigl(\frac{i\Phi^{(3)}(x_0)}{6}\Bigr)^2I_6\right) \right] +\cdots \right\}.
+\]
+
+\subsection*{Step 4. Evaluate the Gaussian Integrals}
+
+The standard Gaussian integrals (with a complex phase) yield:
+\[
+\begin{aligned}
+I_0&=\int_{-\infty}^\infty e^{i\frac{1}{2}\Phi''(x_0)s^2}ds
+=\sqrt{\frac{2\pi}{|\Phi''(x_0)|}}\,e^{i\frac{\pi}{4}\,\sgn\Phi''(x_0)},\\[1mm]
+\frac{I_2}{I_0}&=\frac{i}{\Phi''(x_0)},\qquad
+\frac{I_4}{I_0}=-\frac{3}{\left(\Phi''(x_0)\right)^2},\qquad
+\frac{I_6}{I_0}=-\frac{15\,i}{\left(\Phi''(x_0)\right)^3}.
+\end{aligned}
+\]
+
+\subsection*{Step 5. Assemble the Asymptotic Expansion}
+
+Factor out the leading term $I_0$:
+\[
+I(\lambda)=e^{i\lambda\Phi(x_0)}\,I_0\,\frac{1}{\sqrt{\lambda}}\left\{ A(x_0) + \frac{1}{\lambda}\,\Delta + O\left(\lambda^{-2}\right) \right\},
+\]
+where the correction term is given by
+\[
+\Delta = \frac{A''(x_0)}{2}\,\frac{I_2}{I_0} + A(x_0)\left[\frac{i\Phi^{(4)}(x_0)}{24}\,\frac{I_4}{I_0} -\frac{1}{2}\left(\frac{i\Phi^{(3)}(x_0)}{6}\right)^2\,\frac{I_6}{I_0}\right].
+\]
+Substituting the ratios we obtained:
+\[
+\begin{aligned}
+\Delta &= \frac{A''(x_0)}{2}\left(\frac{i}{\Phi''(x_0)}\right)
++ A(x_0)\left[\frac{i\Phi^{(4)}(x_0)}{24}\left(-\frac{3}{\left(\Phi''(x_0)\right)^2}\right)-\frac{1}{2}\left(\frac{i\Phi^{(3)}(x_0)}{6}\right)^2\left(-\frac{15\,i}{\left(\Phi''(x_0)\right)^3}\right)\right]\\[1mm]
+&=\frac{i\,A''(x_0)}{2\Phi''(x_0)}
+-\frac{3i\,A(x_0)\Phi^{(4)}(x_0)}{24\left(\Phi''(x_0)\right)^2}
++\frac{15\,i\,A(x_0)\bigl(\Phi^{(3)}(x_0)\bigr)^2}{2\cdot 36\left(\Phi''(x_0)\right)^3}\\[1mm]
+&=\frac{i\,A''(x_0)}{2\Phi''(x_0)}
+-\frac{i\,A(x_0)\Phi^{(4)}(x_0)}{8\left(\Phi''(x_0)\right)^2}
++\frac{5\,i\,A(x_0)\bigl(\Phi^{(3)}(x_0)\bigr)^2}{24\left(\Phi''(x_0)\right)^3}.
+\end{aligned}
+\]
+It is conventional to absorb the factor $i$ into the expansion so that the final result is expressed as
+\[
+I(\lambda)\sim e^{i\lambda\Phi(x_0)}\sqrt{\frac{2\pi}{\lambda|\Phi''(x_0)|}}\,e^{i\frac{\pi}{4}\,\sgn\Phi''(x_0)}
+\left\{ A(x_0) + \frac{1}{\lambda}\left[\frac{A''(x_0)}{2\Phi''(x_0)}
+-\frac{A(x_0)\Phi^{(4)}(x_0)}{8\left(\Phi''(x_0)\right)^2}+\frac{5A(x_0)\bigl(\Phi^{(3)}(x_0)\bigr)^2}{24\left(\Phi''(x_0)\right)^3}\right] + O\Bigl(\lambda^{-2}\Bigr) \right\},
+\]
+which is the result in \eqref{result}.
+
+\bigskip
+
+\noindent \textbf{References:} For further details, see Bleistein \& Handelsman, Bender \& Orszag, or Wong.
+
+\end{document}

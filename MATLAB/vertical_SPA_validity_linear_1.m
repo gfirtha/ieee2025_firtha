@@ -7,9 +7,8 @@ y0 = 0;
 dx = 0.05;
 z0 = (-100:dx:100)';
 
-
-xSource = [1,-1,0];
-xRef = [-1,.2,0];
+xSource = [0,.5,0];
+xRef = [0,1,0];
 
 fu = 5e3;
 Nf = 2e3;
@@ -39,6 +38,7 @@ for xi = 1 : length(x0_vec)
     Phi0 = -(F*rP0+rG0);
     ddPhi0 = (F./rP0 + 1./rG0);
     Iappr = sqrt(2*pi./(1i*k*abs(ddPhi0)))*exp(1i*pi/4*sign(ddPhi0))*A0.'.*exp(1i*k*Phi0.');
+%    Iappr = sqrt(2*pi)*exp(1i*pi/4*sign(ddPhi0))./abs(k*ddPhi0).^(0.5).*A0.'.*exp(1i*k*Phi0);
 
 
     cG0 = 1./rG0;
@@ -46,21 +46,32 @@ for xi = 1 : length(x0_vec)
     K1 = (2*cP0.^2+cG0.^2)./(F.*cP0+cG0);
     K2 =   3/4*(F*cP0.^3+cG0.^3)./(F*cP0+cG0).^2;
 
-    k0 = 1;
-    omMin = c.*abs(K1-K2)/k0;
+    omMin = c.*abs(K1-K2)/2;
     freqAnal(xi) = omMin / 2 / pi;
 
     dBdiff = abs(20*log10(abs(I))-20*log10(abs(Iappr)));
-    ixs = find(dBdiff<( 1.5 ) );
+    ixs = find(dBdiff<( 3.1 ) );
+    if ~isempty(ixs)
     freqMeasured(xi) = freq(ixs(1)) ;
+    else
+        freqMeasured(xi) = inf;
+    end
 
 end
 %%
-figure
+f = figure('Units','points','Position',[200,200,607,244]);
+
+set(f,'defaulttextinterpreter','latex')
+   
+
+%p1 = axes('Units','normalized','Position',pos(1,:));
+
 plot(x0_vec,freqMeasured,'LineWidth',1.5)
 hold on
 plot(x0_vec,freqAnal,'--','LineWidth',1.5)
-legend('Measured cutott','Analytical cutoff')
-xlabel('x [m]')
-ylabel('f [Hz]')
+legend('Measured cutott freq.','Analytical cutoff freq.')
+xlabel('$x$ [m]','Interpreter','latex')
+ylabel('$f$ [Hz]','Interpreter','latex')
 grid on
+set(gcf,'PaperPositionMode','auto');
+print( '-r300','cutoff_comparison_setup3' ,'-dpng')
