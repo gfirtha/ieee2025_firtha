@@ -1,0 +1,28 @@
+\appendix[Description of diffractional waves]
+\label{app:diff}
+
+The original formulation in \cite[Eq. 2.6.11]{Bleistein1984} formulates the effect of discontinuities as splitting the original integral into subintegrals bounded by the critical discontinuities.
+By investigating one subintegral between critical points $s_1$ and $s_2$ the integral is approximated by 
+\begin{equation}
+    \small
+    I(s_1) \sim  \sum_{n = 0}^{\infty} \frac{(-1)^{n+1}}{(\ti k)^{n+1}} \left( \frac{1}{\phi'_s(s_1)} \frac{\partial}{\partial s}\right)^{n} \left( \frac{A(s_1)}{\phi'_s(s_1)} \right) \te^{\ti k \phi(s_1)}
+\end{equation}
+with the expression for $s_2$ taking the same form, and the entire subintegral is given by
+\begin{equation}
+    \small
+    I = I(s_1) - I(s_2).
+\end{equation}
+First, it is easy to see that if the smallest order of derivative where a discontinuity is present is $n_0$, then the leading order term of the approximation is given by
+\begin{equation}
+    \small
+    I(s_1) \sim \left( -\frac{1}{\ti k \phi'_s(s_1)} \right)^{n_0+1}  A_{s}^{(n_0)}(s_1) \, \te^{\ti k \phi(s_1)},
+\end{equation}
+where $A_{s}^{(n_0)}(s_1)$ is the $n_0$-th derivative of the amplitude w.r.t $s$ taken at $s_1$.
+
+Furthermore, as the integral is split into subintegrals all the critical points will be present in two subintegrals, with reversed signs and the values of the discontinuity taken from the left and the right side of the critical point.
+Assuming that the discontinuity is present in the amplitude function (and not the phase function) this means that the overall contribution to the total integral of each critical point $s^*$ can be written as
+\begin{equation}
+    \small
+    I \sim \left( -\frac{1}{\ti k \phi'_s(s^*)} \right)^{n_0+1}  \Delta A_{s}^{(n_0)}(s^*) \, \te^{\ti k \phi(s^*)},
+\end{equation}
+with $\Delta A_{s}^{(n_0)}(s^*) = A_{s}^{(n_0)}(s^{*+})  - A_{s}^{(n_0)}(s^{*-})  $ as given in the main body text.

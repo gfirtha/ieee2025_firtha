@@ -1,0 +1,1062 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{overpic}
+\usepackage{xcolor}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+% updated with editorial comments 8/9/2021
+\input{scidefs}
+\usepackage{amssymb}
+
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+\begin{document}
+
+\title{Limitations of Wave Field Synthesis Part I:\\Diffraction Effects and Amplitude Errors}
+
+\author{Gergely Firtha
+\thanks{Manuscript received April 19, 2021; revised August 16, 2021.}}
+
+
+% The paper headers
+\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
+{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+
+\IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+\maketitle
+
+\begin{abstract}
+  Wave Field Synthesis (WFS) is a spatial audio rendering technique that aims to reconstruct a desired sound field using dense arrays of secondary loudspeakers. 
+  WFS can theoretically produce realistic wavefronts over an extended area.
+  However, practical implementations suffer from fundamental limitations. 
+  These include amplitude errors away from the reference listening region, diffraction artifacts caused by the finite array aperture, loss of low-frequency content due to high-frequency assumptions in the driving signals, and aliasing artifacts from the discretization of the secondary source array.
+  In this paper, we present a rigorous analysis on the amplitude errors and diffractional effects by asymptotically evaluating the integral expressions underlying WFS. 
+  The resulting expressions reveal how the reproduced sound field can be decomposed into an ideal target component and additional diffraction terms that account for truncation and other boundary effects.
+   We illustrate the impact of these effects on amplitude accuracy for typical secondary source distributions (linear and circular arrays) and extend the analysis to focused sources (virtual sources placed inside the loudspeaker array). 
+   \end{abstract}
+
+
+\begin{IEEEkeywords}
+Article submission, IEEE, IEEEtran, journal, \LaTeX, paper, template, typesetting.
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Wave Field Synthesis (WFS) is an advanced spatial audio rendering technique capable of accurately synthesizing desired sound fields by driving a dense array of secondary loudspeakers arranged along a contour or surface termed as the secondary source distribution (SSD).
+Originally proposed by Berkhout in the late 1980s \cite{Berkhout1988}, WFS leverages the Huygens–Fresnel principle to reconstruct the intended wavefront over an extended area.
+Over the last several decades the theory has been refined\,\cite{Start1997:phd,Verheijen1997:phd}, recast into alternative mathematical frameworks\,\cite{Spors2008:WFSrevisited,Spors2013:Survey,Firtha2016,Firtha2019phd, Firtha2018:ieee}, and broadened to encompass advanced virtual‑source paradigms such as focused sources situated inside the listening area\,\cite{Spors2009focused,Wierstorf2013focused}, or moving virtual sources \cite{Ahrens2008moving, doi:10.1121/1.4996126}.
+
+Mathematically, WFS employs an integral representation of the desired field: the Kirchhoff approximation—an inherently high‑frequency formulation—for arbitrary enclosing surfaces, or the Rayleigh integral for planar boundaries, both of which constitute single‑layer potential descriptions.  
+These integrals implicitly contain the SSD driving signals for a 3D synthesis scenario or are approximated asymptotically to reduce the problem dimensionality and derive driving signals for an arbitrary SSD contour.
+
+Consequently, WFS reproduces the desired wavefront within a finite frequency band, yet several limitations arise:  
+First, because the underlying approximations are high‑frequency in nature, low‑frequency content is progressively lost below a geometry‑dependent cut‑off.  
+At the opposite end of the spectrum, discretizing the continuous integrals—--implementing them with discrete loudspeaker positions--—introduces a high‑frequency limit above which spatial aliasing corrupts the reconstruction\,\cite{8611109}. 
+Within the admissible band the reconstructed field still exhibits diffraction artifacts arising from discontinuities in the SSD caused by the transformation from a double‑ to a single‑layer potential, and the intended component suffers amplitude deviations introduced by the dimensionality reduction.  
+As a consequence, amplitude‑accurate synthesis is confined to a predefined reference curve inside the listening area.
+
+Although each of these artifacts has been discussed in the literature, several aspects remain insufficiently understood.  
+In particular, the precise low‑frequency limit has yet to be rigorously analyzed.  
+Earlier analytical treatments of the diffraction effects did not incorporate the influence of tapering windows.  
+Moreover, while the present author previously introduced the conceptual framework for defining and controlling the reference curve, the exact amplitude distribution of the synthesized field has not yet been examined in detail.
+
+This paper, together with its forthcoming sequel, seeks to fill these gaps in WFS theory.  
+First, we present a unified formulation that explicitly uncovers the relationship between WFS and geometrical acoustics (ray theory).
+Next, we demonstrate how the integral representation of the synthesized field can be asymptotically decomposed into the intended component and the diffraction artifacts.
+The intended component intrinsically entails amplitude deviations, which we derive analytically as explicit functionals of the target field.  
+Conversely, we propose a concise analytical model for the diffraction contribution, enabling the prediction of its propagation behavior and demonstrating how suitable tapering controls its amplitude and spectral characteristics.  
+Finally, the presented unified framework is extended to include focused sources, highlighting the crucial role of tapering in focused WFS due to enhanced truncation artifacts.
+
+
+\section{General Wave Field Synthesis theory}
+\subsection{Ray theory basics and problem formulation}
+Assume an arbitrary 3D sound field given by its general polar form
+\begin{equation}
+  P(\vx,\omega) = A^P(\vx) \, \te^{\ti k \phi^P(\vx)},
+  \label{eq:general_field}
+\end{equation}
+with $\vx = \posvec{3}{x}{y}{z}$ being an arbitrary 3D position, $k = \frac{\omega}{c}$ being the acoustic wavenumber and $c$ is the speed of sound.
+The wavefronts are defined as isophase surfaces ($\phi^P = \mathrm{constant}$), that can be characterized by its local propagation direction and curvature in an intrinsic (ray-centered) coordinate frame:
+
+The normalized local wavenumber vector is defined as 
+\begin{equation}
+  \vhk^P(\vx) = -\nabla_{\vx} \phi^P(\vx), \hspace{5mm} |\vhk^P(\vx)| = 1
+  \label{eq:eikonal}
+\end{equation}
+being a unit vector\footnote{This assumption strictly holds for simple sound fields (point/line sources and plane waves). For further elaboration on its validity refer to \cite{Firtha2019phd}.} pointing towards maximum phase advance, i.e. the local propagation direction of the sound field. 
+Equation \eqref{eq:eikonal} is the first main equation of ray theory, termed as the eikonal in the field of ray tracing.
+
+\begin{figure} 
+  \begin{center}
+    \begin{overpic}[width = 0.75\columnwidth ]{figs/wavefront_curvature.png}
+	\small
+	\put(45,50.5){$\vx$}
+	\put(46,67){$\hat{\vk}^P(\vx)$}
+	\put(36,40){$\rho^P_1(\vx)$}
+	\put(60,28.5){$\rho^P_2(\vx)$}
+	\put(60.5,61){$\mathbf{v}^P_1(\vx)$}
+	\put(27.5,62){$\mathbf{v}^P_2(\vx)$}
+	\put(71,40){wavefront}
+	\end{overpic}
+\end{center}
+\caption{
+	 Geometry for the principal radii and principal curvatures of an arbitrary smooth wavefront \cite{Firtha2019phd}.
+   The wavefront denotes isochron surface with the phase of $\phi^P(\vx)$.}
+	\label{Fig:local_wave_curvature}
+\end{figure}
+
+The local wavefront curvature is described by the second derivative of the phase function.
+More specifically: two principle curvature components (a maximal and a minimal one) characterize the wavefront, given by the two eigenvalues of the phase function's Hessian at a given position
+\begin{equation}
+  \kappa^P_{1,2}(\vx) = \frac{1}{\rho^P_{1,2}(\vx)} = - \mathrm{eigs}\left( \frac{\partial^2 \phi^P(\vx)}{ \partial \vx_i \partial \vx_j} \right),
+\end{equation}   
+where $\rho^P_{1,2}$ are the principal radii of the wavefront.
+A detailed description on the wavefront curvature and the Hessian is given in Appendix \ref{app:hessian}.
+
+It is noted here that the amplitude and the phase function are not independent: under high-frequency assumptions the relative amplitude change can be expressed as
+\begin{equation}
+  \overline{\kappa}^P(\vx) = - \left< \vhk^P(\vx) \cdot \frac{\nabla_{\vx} A(\vx)}{A(\vx)} \right>,
+  \label{eq:transport}
+\end{equation}
+with $\overline{\kappa}(\vx)$ being the geometrical mean of the wavefront curvatures.
+Equation \eqref{eq:transport} is the second main ray tracing equation, referred to as the transport equation, describing the geometrical spreading of the wavefront energy.
+The eikonal and transport equations are directly yielded from substituting the general polar form \eqref{eq:general_field} into the wave equation and requiring the equation to hold simultaneously for both the real and imaginary parts \cite{Firtha2019phd}.
+
+By integrating \eqref{eq:eikonal} for the phase change and \eqref{eq:transport} for the amplitude change the wave field can be expressed towards the local wavenumber vector as
+\begin{equation}
+  \footnotesize
+  P(\vx + \vhk^P(\vx) \td x,\omega) = \sqrt{ \frac{\rho^P_1(\vx) \rho^P_2(\vx)}{\left(\rho^P_1(\vx)+\td x\right) \left(\rho^P_2(\vx) + \td x\right)} } \te^{-\ti k \td x} P(\vx,\omega),
+  \label{eq:ray_tracing}
+\end{equation}
+being a central ray tracing equation, given e.g. in \cite[Eq. 8.5.8]{Pierce2019}
+
+In the aspect of sound field synthesis our aim is to reproduce this wavefront by driving a theoretically continuous contour of secondary point sources located along $C$ in Fig.~\ref{Fig:geometry}---termed as the secondary source distribution (SSD)---by the driving functions $D(\vxo,\omega)$ so that the synthesized field given by
+\begin{equation}
+  \Psynth(\vx,\omega) = \oint_C D(\vxo, \omega) G(\vx-\vxo) \td s(\vxo),
+  \label{eq:synth_field}
+\end{equation}
+coincides with the target sound field.
+Here $G(\vx-\vxo) = \frac{1}{4\pi} \frac{\te^{-\ti k |\vx-\vxo|}}{|\vx-\vxo|}$ denotes the 3D free-field Green's function (describing the field of a point source) and $s(\vxo)$ is the arc length along the SSD.
+The contour of secondary sources are located in the horizontal plane consisting the listener's ear fixed to $z = 0$, termed as the synthesis plane.
+The geometry under discussion is illustrated in Fig.~\ref{Fig:geometry}.
+
+Due to obvious physical restrictions such a secondary source contour is able to reconstruct sound fields, propagating merely along the synthesis plane, hence, investigation is restricted to target fields with $\hat{k}_z^P = 0$.
+This constraint also predetermines that the principal curvatures/radii of the wavefront are given by the horizontal and vertical components, denoted by $\kappa^P_{v,h}(\vx)$ and $\rho^P_{v,h}(\vx)$.
+
+In the following it is shown that WFS is capable to reconstruct the wave front up to its local propagation direction and its curvature in the entire listening region, while amplitude correct synthesis is restricted to a predefined reference curve.
+\begin{figure} 
+  \begin{center}
+    \begin{overpic}[width = 1\columnwidth ]{figs/WFS_geometry_2b.png}
+	\scriptsize
+	\put(61.5,40.5){$\vxo$}
+	\put(44,40){$\vxref(\vxo)$}
+	\put(24,35){$\vx$}
+	\put(3,19){synthesis plane}
+	\put(40,22){$C$: SSD contour}
+	\put(8,50){$S$: integral surface}
+	\put(80.5,71){reference curve}
+	\put(80.5,61.5){active SSD}
+	\put(56,34){$\vhk^P(\vxo)$}
+	\put(84,47){$x$}
+	\put(95,29){$y$}
+	\put(97,58){$z$}
+	\put(81,42){$\vxs$}
+	%\put(72,37){$\rho^P(\vxo)$}
+  \put(80,66){{\fontsize{7pt}{\baselineskip}
+  \selectfont \parbox{4cm}{vertical integral\\path}  }}
+	\end{overpic}
+\end{center}
+\caption{ Geometry for deriving the 2.5D WFS driving functions.}
+	\label{Fig:geometry}
+\end{figure}
+
+
+\subsection{The Kirchhoff-approximation and the Rayleigh integral}
+The starting point of Wave Field Synthesis is the Kirchhoff approximation (KA), establishing a mathematical basis for the well-known Huygens principle.
+The Kirchhoff approximation describes the target field inside the listening region in terms of the a surface integral
+{\fontsize{9pt}{\baselineskip}
+\selectfont
+\begin{multline}
+  P(\vx,\omega) \approx -2 \oint_\Omega w(\vxo) P'_{\mathrm{n}}(\vxo, \omega) \, G(\vx-\vxo) \td S(\vxo) = \\
+  = -2 \oint_\Omega w(\vxo) \bigg( \underbrace{ \frac{A^{P'}_{\mathrm{n}}(\vxo)}{A^P(\vxo)} }_{-\hkn^P(\vxo)\overline{\kappa}^P(\vxo)} + \ti k \underbrace{\phi^{P'}_{\mathrm{n}}(\vxo)}_{-\hkn^P(\vxo)}\bigg) \cdot \\ P(\vxo, \omega) \, G(\vx-\vxo) \,\td S(\vxo),
+  \label{eq:KA}
+\end{multline}}
+where $P'_{\mathrm{n}}(\vxo, \omega) = \left< \left. \nabla_{\vx} P(\vx, \omega)\right|_{\vx = \vxo} \cdot \vnin(\vxo) \right>$ denotes the derivative of sound field $P$ into the inward normal direction, and $w(\vxo)$ is a window function given as
+\begin{equation}
+  w(\vxo) = 
+  \begin{cases}
+    1  \hspace{5mm} \text{if} \hspace{1cm} \hkn^P(\vxo)\geq 0, \\
+    0   \hspace{5mm} \text{otherwise}.
+  \end{cases}
+\end{equation}
+The geometry under discussion, depicting the integral surface is shown in Fig.~\ref{Fig:geometry}, with the non-zero part of the window function denoted by pale red surface.
+In the present case the geometry is chosen to be invariant along the vertical axis, hence, the integral can be split to a vertical and a horizontal integral ($\int_\Omega ... \td S(\vxo) = \int_{C} \int_{-\infty}^{\infty} ... \td z_0 \td s(x_0,y_0)$).
+
+The above integral formulation is a high frequency approximation with its validity discussed in the forthcoming sequel for the present paper.
+For the degenerate case where the enclosing surface tends to an infinite plane \eqref{eq:KA} holds with equality, and the planar integral is referred to as the Rayleigh integral, forming the basis of traditional Wave Field Synthesis theory.
+
+\subsection{Asymptotic approximation of oscillating integrals}
+The backbone of WFS theory is based on the asymptotic evaluation of the involved highly oscillating integrals.
+The approximations rely on the fact that for oscillatory integrals at high frequencies most of the oscillations cancel out and the integral is dominated by \emph{critical points} in the integral path, where
+\begin{itemize}
+  \item any derivative of the amplitude or the phase function has a discontinuity at positions where the phase function varies.
+  In an extreme case this may mean a jump in the amplitude function itself, e.g. at the end of a truncated integral path (SSD).
+  \item the phase function does not vary, i.e. its derivative vanishes, termed as a \emph{stationary point}.
+\end{itemize}
+%Integration of the terms in the series analytically allows the transformation of the integral into a power series around the critical point $\vx^*$ in the form of $P(\vx, \omega) \sim \te^{\ti k \phi^P(\vx^*)}\sum_{i=0}^{\infty} \frac{p_i(\vx^*)}{k^i}$.
+%This form is, again, a standard expansion of an arbitrary sound fields in the field of classic ray theory known as the WKB (Wentzel–Kramers–Brillouin) approximation \cite{Davis2000}.
+
+Due to the separability of the KA in the present geometry it is enough to define the integral approximations in one dimension:
+Let's investigate the behavior of the oscillating integral 
+\begin{equation}
+  I = \int A(s) \te^{\ti k \phi(s)} \td s.
+\end{equation}
+Mathematically, all the approximations rely on the Taylor's expansion of the phase and the amplitude functions around a critical point up to a given order.
+Given a critical point $s^*$ in the integral path, depending on the type of the critical point the integral is approximated as follows:
+\begin{itemize}
+  \item In case of a discontinuity in the amplitude function by approximating the phase function up to the first order Taylor's expansion yields the leading order approximation as (see Appendix \ref{app:diff} for further explanation)
+  \begin{equation}
+    \small
+    I \sim\left( -\frac{1}{\ti k \phi'_s(s^*)} \right)^{m+1}  \Delta A_{s}^{(n)}(s^*) \, \te^{\ti k \phi(s^*)},
+    \label{eq:endpoint_I}
+  \end{equation}
+  with $m$ being the first derivative order where the amplitude function jumps, and $\Delta A_{s}^{(n)}(s^*) = A_{s}^{(n)}(s^{*+})  - A_{s}^{(n)}(s^{*-})$ being the amount of jump between the right and the left side of $s^*$.   
+  \item For a stationary position where $\phi'_s(s^*) = 0$ holds the phase is approximated up to the second, and the amplitude by its leading order, yielding the well-known stationary phase approximation 
+  \begin{equation}
+    I \sim  
+    A(s^*)
+    \te^{\ti k \phi(s^*)} \sqrt{\frac{2\pi}{k |\phi^{''}_{ss}(s^*)|}} \te^{\ti \frac{\pi}{4}\mathrm{sign}(\phi^{''}_{ss}(s^*))}.
+    \label{eq:SPA_def1}
+\end{equation}
+\end{itemize}
+Note that it is required that discontinuities do not coincide with stationary positions, with its physical interpretation discussed in the following section.
+
+In the following these approximations are applied to the Kirchhoff integral \eqref{eq:KA} in order to arrive at 2.5D WFS driving functions, analyze the synthesized field and to analyze diffractional effects.
+
+\subsection{The 2.5D WFS driving functions}
+First the stationary phase approximation is applied in order to evaluate the vertical integral in the Kirchhoff approximation \eqref{eq:KA} (due to the vertically infinite geometry merely the stationary position contribute to the vertical integral).
+The stationary position for the entire surface integral is found where $\vhk^P(\vxo^*) = \vhk^G(\vx-\vxo^*)$ holds\footnote{I.e. where its gradient vanishes emerging from the 2D SPA}, i.e. where the local propagation direction of the Green's function is aligned with that of the virtual field along the SSD.
+For virtual fields located in the synthesis plane with $\hat{k}^P_z = 0$ the vertical stationary position is identically found at $z^* = 0$ as it is illustrated in Fig.~\ref{Fig:geometry}.
+
+In order to evaluate \eqref{eq:KA} vertically by \eqref{eq:SPA_def1} one needs the second derivative of its phase function, described by the virtual field's phase, propagated by the Green's function phase to the receiver position.
+As discussed in details in Appendix \ref{app:hessian}, the required second derivative is given by the sum of the virtual field's and the Green's function's curvature 
+\begin{equation}
+  \phi^{P+G''}_{zz} = -\left( \frac{1}{\rho^G(\vx-\vxo)} + \frac{1}{\rho^P_v(\vxo)} \right),
+\end{equation} 
+with exploiting that the vertical and horizontal curvatures of the Green's function coincide.
+Furthermore, for a virtual 3D point source $\rho^P_{v/h}(\vxo) = |\vxo|$ holds, while for a virtual plane wave $\rho^P_{v/h} = \infty$.
+
+These results already allow one to evaluate the vertical integral by the SPA around $z^*_0 = 0$, resulting in a contour integral describing the target/virtual field at a fixed $\vx$ position.
+As a further high frequency approximation (by assuming that $k \phi^{P'}_{\mathrm{n}}(\vxo) \gg \frac{A^{P'}_{\mathrm{n}}(\vxo)}{A^P(\vxo)}$ holds) the term containing the amplitude gradient in \eqref{eq:KA} is usually discarded from the 2.5D WFS driving functions.
+The validity of this assumption/approximation is investigated in details in the upcoming contribution.
+
+Finally, under the validity of a further, horizontal SPA (evaluated analytically in the next section) it is exploited that each SSD element at $\vxo$ dominates the synthesized field at those receiver positions for which this SSD element serves as the stationary position.
+This allows one to assign a unique reference position to each SSD element denoted by $\vxref(\vxo)$ in Fig.~\ref{Fig:geometry}.
+The set of all reference positions define a reference curve along which amplitude correct synthesis can be achieved.
+Strategies for controlling the shape of this reference curve are given in \cite{Firtha2019phd, Firtha2016}
+
+With these considerations the final form of the driving functions reads as
+\begin{multline}
+  \small
+  D(\vxo,\omega) = w(\vxo) \sqrt{8\pi \ti k} \cdot
+  \\  \cdot \sqrt{\frac{ \rho^P_v(\vxo) \, \rho^G(\vxref(\vxo)-\vxo) }{ \rho^P_v(\vxo) + \rho^G(\vxref(\vxo)-\vxo)} } \hkn^P(\vxo) P(\vxo, \omega),
+  \label{eq:driv_fun}
+\end{multline}
+with $\rho^G(\vxref(\vxo)-\vxo) = |\vxref(\vxo)-\vxo|$ being the reference distance for each SSD element.
+
+In the following two typical synthesis setups and referencing strategies are applied: synthesis using a finite/infinite linear SSD, located at $\vxo = \posvec{3}{x_0}{0}{0}$, and a circular SSD with radius $\Rssd$, centered at the origin.
+
+\subsubsection{Driving functions for a linear SSD}  
+For the linear case amplitude correct synthesis is usually ensured along a reference line, parallel to the SSD at $\vxref = \posvec{3}{x}{\yref}{0}$, in which case the reference distance from a given SSD element is given by $\rho^G(\vxref(\vxo)-\vxo) = \yref / \hkn^P(\vxo)$.
+For the case of a virtual point source located at $\vxs$, with $\rho^P_{v}(\vxo)  = |\vxo-\vxs|$ and $\hkn^P(\vxo) = -\frac{y_0-y_s}{|\vxo - \vxs|}$ the driving function yields
+\begin{equation}
+  \small
+  D(\vxo,\omega) = w(\vxo) \sqrt{8\pi \ti k} 
+  \sqrt{\frac{  \yref  }{ y_s  - \yref  } } \frac{y_s}{\sqrt{|\vxo - \vxs|}} P(\vxo, \omega)
+\end{equation}
+being the well-known traditional 2.5D WFS driving function.
+
+\subsubsection{Driving functions for a circular SSD}
+For a circular SSD synthesis is optimized to the center of the array, with the reference distance set to $\rho^G(\vxref(\vxo)-\vxo) = \Rssd$.
+This results in a reference curve, passing through the origin, independently of the virtual field model.
+
+\section{Asymptotic evaluation of the synthesized field}
+\begin{figure} 
+  \begin{center}
+    \begin{overpic}[width = .85\columnwidth ]{figs/truncation.png}
+	\scriptsize
+	\put(66,31){$\vhk^P(s^*)$}
+	\put(73,17.25){$s^*$}
+	\put(54.5,6.5){$s_1^*$}
+	\put(56,18.3){$s_3^*$}
+	\put(77.5,25){$s_4^*$}
+	\put(86,17){$s_2^*$}
+  \put(60,46){$\vx(s^*)$}
+  \put(56,56){$C: s(\vxo)$}
+  \put(62,14.5){\rotatebox{20}{ \textcolor[RGB]{162,50,52}{ $w(s)$} } }  
+  \normalsize
+  \put(10,29.5){$\mathfrak{T}_1$}
+  \put(83,40){$\mathfrak{T}_2$}
+  \put(30,10){$\mathfrak{S}_1$}
+  \put(92,29){$\mathfrak{S}_2$}
+  \large
+  \put(30,42){$\mathfrak{I}$}
+	\end{overpic}
+\end{center}
+\caption{Illustration of regions in the synthesized field in case of a finite SSD segment.
+The SSD contour $C$ is parametrized typically with uniform arc length $s(\vxo)$.
+$\mathfrak{I}$ denotes the illuminated region, $\mathfrak{S}_i$ the shadow and $\mathfrak{T}_i$ the tapering regions.}
+	\label{Fig:truncation}
+\end{figure}
+
+
+Assume that we have a finite segment of the SSD ---either due to employing an enclosing contour, or due to truncation--- synthesizing an arbitrary virtual field by applying the driving function given by \eqref{eq:driv_fun}.
+A simple example geometry for a truncated SSD is illustrated in Fig.~\ref{Fig:truncation}.
+The integral describing the reproduced field is given by
+\begin{equation}
+  \Psynth(\vx,\omega) = \int_{\vx_1}^{\vx_2}  D(\vxo, \omega) \, G(\vx-\vxo) \td s(\vxo),
+\end{equation}
+with $\vx_1, \vx_2$ being the endpoints of the SSD, denoted by its parametrization $s_1^*$ and $s_2^*$ in Fig.~\ref{Fig:truncation}.
+According to \eqref{eq:driv_fun} the amplitude and phase functions of the integrand are given as
+\begin{align}
+  \small
+  A^{D\cdot G}(\vxo) &= w(\vxo) A^D(\vxo) \, A^G(\vx-\vxo) \\
+  \phi^{D\cdot G}(\vxo) &= -\left( \phi^P(\vxo) + \phi^G(\vx-\vxo)\right) + \pi/4.
+\end{align}
+The window function $w(\vxo)$ is either unity over the active SSD as discussed in the foregoing, or tapering is applied towards the SSD ends as shown in the exemplary case of Fig.~\ref{Fig:truncation}.
+
+
+The integral can be evaluated around its critical positions, i.e. a stationary position or multiple discontinuities.
+%The contribution of the stationary position describes the ideal synthesized sound field discussed in the following section, while potential discontinuites contribute to the total field as diffractional waves.
+Depending on the receiver position $\vx$ the integral path may contain different critical positions:
+\begin{itemize}
+  \item for locations in $\mathfrak{S}_1 \cup \mathfrak{S}_2$ no stationary position can be found in the integral path.
+  In these positions only the discontinuities contribute to the synthesized field.
+  These terms describe the diffractional waves emerging from each positions on the SSD where the driving function contains discontinuites.
+  As no intended synthesis can be performed over this area, this domain is termed as the shadow zone.
+  \item for locations in $\mathfrak{I} \cup \mathfrak{T}_1 \cup \mathfrak{T}_2$ both the discontinuity and the stationary point contribute to the field.
+  The contribution of the stationary position describes the ideal synthesized sound field evaluated in the following subsection, with the presence of additional diffraction.
+  These regions can be further separated to an illuminated area $\mathfrak{I}$ for which driving function in the stationary position is untapered and tapered regions $\mathfrak{T}_{1/2}$ where the amplitude of the synthesized field is altered due to tapering.
+  Obviously, in the untapered case $\mathfrak{T}_{1/2} = \emptyset$.
+\end{itemize}
+\begin{figure}[!t]
+  \centering
+  % LEFT COLUMN
+  \begin{minipage}[t]{0.45\columnwidth}
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=0.96\linewidth]{figs/P_components_re_1.png}
+        \small\put(0,0){(a)}
+      \end{overpic}
+    \end{minipage}\vspace{1mm}
+    
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=0.96\linewidth]{figs/P_components_re_2.png}
+        \small\put(0,0){(c)}
+      \end{overpic}
+    \end{minipage}\vspace{1mm}
+    
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=0.96\linewidth]{figs/P_components_re_3.png}
+        \small\put(0,0){(e)}
+      \end{overpic}
+    \end{minipage}
+  \end{minipage}
+  \hfill
+  % RIGHT COLUMN
+  \begin{minipage}[t]{0.53\columnwidth}
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=\linewidth]{figs/P_components_abs_1.png}
+        \small\put(0,0){(b)}
+      \end{overpic}
+    \end{minipage}\vspace{1mm}
+    
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=\linewidth]{figs/P_components_abs_2.png}
+        \small\put(0,0){(d)}
+      \end{overpic}
+    \end{minipage}\vspace{1mm}
+    
+    \begin{minipage}[t]{\linewidth}
+      \begin{overpic}[width=\linewidth]{figs/P_components_abs_3.png}
+        \small\put(0,0){(f)}
+      \end{overpic}
+    \end{minipage}
+  \end{minipage}
+
+  \caption{Components of the synthesized field in case of a virtual plane wave at $1~\mathrm{kHz}$. Left column: real part, right column: absolute value (dB). First row (a,b) depicts the total field, second row (c,d) depicts the intended field and third row (e,f) depicts the diffractional waves.}
+  \label{fig:wfs_components}
+\end{figure}
+
+
+In the following these individual contributions are evaluated asymptotically in order to describe diffractional waves, the effect of tapering and the spatial distribution of the synthesized field.
+A typical synthesis scenario for the case of a virtual plane wave synthesized by a linear truncated SSD with the length of $3~\mathrm{m}$ and tapered with a Tukey window $\alpha = 0.5$ is depicted in Fig.~\ref{fig:wfs_components}, along with the intended and diffractional components that are described in the following section.
+The intended field is calculated from the target field by using the asymptotic formulation introduced later in Eq.~\eqref{eq:WFS_amp_dist}.
+
+
+\subsection{Evaluation of diffraction effects}
+The following discussion is based on the idea outlined in \cite[Sec. 4.3.1]{Start1997:phd}, however, it is further extended in order to account for the effects of tapering.
+
+In order to evaluate the contribution of the discontinuities in the integral path \eqref{eq:endpoint_I} can be applied for each critical positions.
+Since both $A^P(\vxo)$ and $A^G(\vx-\vxo)$ describe the amplitude of simple, physically feasible sound fields, therfore, these functions are continuous up to an arbitrary derivative. 
+It means that jumps can be present only in the window function, meaning that 
+\begin{equation}
+  \Delta A^{D\cdot G (n)}_s =  \Delta w^{(n)}_s(\vxo) \left( A^D(\vxo) \, A^G(\vx-\vxo) \right),
+\end{equation}
+holds, i.e. merely the jump in the first non-zero derivative of the window function determines the amplitude jump.
+With this consideration the diffraction waves emerging from a discontinuity in the window function reads as
+\begin{multline}
+  \small
+  P_{\mathrm{diffr,\vxo^*}}(\vx,\omega) \sim\left( -\frac{1}{\ti k \left(\hks^P(\vxo)+\hks^G(\vx-\vxo^*)\right)} \right)^{n+1} \cdot \\ 
+  \cdot \Delta w^{(n)}_s(\vxo^*) \overline{D}(\vxo^*) \, G(\vx-\vxo^*)
+  ,
+  \label{eq:diffr_waves}
+\end{multline}
+with $\overline{D}$ denoting the untapered driving function.
+This expression states that each discontinuity can be approximated as a spherical wave emerging from the point of discontinuity with the following important properties
+\begin{itemize}
+  \item the point source is driven by the amount of jump in the first non-zero ($n$-th) derivative of the window function,
+  \item its is radiating with a directivity described by $\frac{1}{\left(\hks^P(\vxo^*)+\hks^G(\vx-\vxo^*)\right)^{n+1}}$, i.e. the diffractional waves emerging from $\vxo^*$ are directed towards $\vhk^P(\vxo^*)$,
+  \item the diffractional source has a frequency response $\sim 1 / k^{n+0.5}$, along with accounting for the pre-equalization term present in $\overline{D}$.
+\end{itemize}
+This last statement highlights the role of tapering in WFS theory (being a well-known fact in antenna theory and digital signal processing concerning DFT-s):
+Applying a window function to the driving functions with a smooth derivative up to the $m$-th order at critical points  decreases the effect of diffractional waves by $1/\omega^n$, i.e. $-n\cdot 20~\mathrm{dB}/\mathrm{decade}$. 
+
+One important fact has to be pointed out here: 
+Expression \eqref{eq:endpoint_I} assumes that the discontinuity under discussion is sufficiently far from the stationary position ---manifesting in a singularity at $\vhk^P(\vxo^*) = \vhk^G(\vx-\vxo^*)$---.
+In the present context it means that the main lobe of the diffractional wave, i.e. the transitions between different zones depicted in Fig.~\ref{Fig:truncation} cannot be described by the above formulation.
+These regions could be taken into consideration either by applying expressions \cite[Eq. 2.7.12 and 2.7.17]{Bleistein1984} or by employing Fresnel's approximation \cite[Sec.4.3.2]{Start1997:phd}.
+However, in the aspect of the present investigation it is sufficient to assume that discontinuities and the stationary position lie far away from each other.
+This simplified model is sufficient to describe diffraction effects towards the center of the active listening region being of central importance in the aspect of the present application.
+Furthermore, the above formulation captures that important effect that the main radiation direction of diffractional waves is defined by $\vhk^P(\vxo^*)$ i.e. the local propagation direction of the virtual field measured at the discontinuity.
+
+In the following several frequently used synthesis scenarios are investigated in the aspect of truncation artifacts.
+
+\subsubsection{Application for an untapered truncated SSD}
+Assume the case of an SSD contour truncated between left and right endpoints $\vx_1 $ and $\vx_2$.
+For the untapered case truncation can be modeled by applying a rectangular window, having a jump in its zeroth derivative $\Delta w(\vx_i) = \pm 1$ at the endpoints.
+By using \eqref{eq:diffr_waves} this yields 
+{\fontsize{9pt}{\baselineskip}
+\selectfont
+\begin{multline}
+  \small
+  P_{\mathrm{diffr}}(\vx,\omega) \sim \sum_{i = 1}^{2}  \frac{\overline{D}(\vx_i) \, G(\vx-\vx_i)}{\ti k \left(\hks^P(\vx_i)+\hks^G(\vx-\vx_i)\right)}   
+  = \\=
+   \sum_{i = 1}^{2} \sqrt{ \frac{8 \pi}{\ti k} }\sqrt{\frac{ \rho^P_v \, \rho^G }{ \rho^P_v + \rho^G} } \frac{  \hkn^P(\vx_i) P(\vx_i, \omega) \, G(\vx-\vx_i)}{ \left(\hks^P(\vx_i)+\hks^G(\vx-\vx_i)\right)^{0.5}}.
+\end{multline}}
+This means that in this simplest scenario two sources of diffractional waves are present, located at the two ends of the SSD radiating towards the virtual source's propagation direction, with the frequence response proportional with $1/\omega$.
+
+\begin{figure}[!t]
+  \centering
+
+  % LEFT COLUMN
+  \begin{minipage}{0.45\columnwidth}
+    \begin{overpic}[width=\linewidth]{figs/P_diffr_xf_tukey.png}
+      \small\put(0,0){(a)}
+    \end{overpic}
+  \end{minipage}
+  \hfill
+  % RIGHT COLUMN
+  \begin{minipage}{0.53\columnwidth}
+    \begin{minipage}{1\columnwidth}
+      \begin{overpic}[width=\linewidth]{figs/P_diffr_f_tukey.png}
+      \small\put(0,0){(b)}
+    \end{overpic}
+  \end{minipage}
+    \vspace{0.1cm} % small vertical gap
+    
+    \begin{minipage}{1\columnwidth}
+    \begin{overpic}[width=\linewidth]{figs/P_diffr_tukey.png}
+      \small\put(0,0){(c)}
+    \end{overpic}
+  \end{minipage}
+\end{minipage}
+
+  \caption{Evaluation of the diffraction model for the case of synthesis of a virtual plane wave with a tapered linear SSD (length of $3~\mathrm{m}$, tapering with $\alpha = 0.5$)
+  Figure (a) shows the amplitude distribution of diffractional waves along the reference line at $f_0 = 800,\, 2000,\, 5000~\mathrm{Hz}$, Figure (b) depicts the frequency response measured at the center of the reference line, and (c) depicts the amplitude distribution over the listener plane at $f_0 = 1000~\mathrm{Hz}$.
+  For (a) the curves were translated by $+50,\, 0\, -50~\mathrm{dB}$ respectively, for enhanced visualization, hence the lack of $y$ axis.
+  The actual, original levels are displayed on the left side of the image.}
+  \label{fig:wfs_diffr_tapered}
+\end{figure}
+
+
+\subsubsection{Application for a tapered SSD}
+The above description illustrated the motivation behind applying a tapering window to the driving functions in order to efficiently suppress the diffraction effects.
+A popular choice is the application of a Tukey window, defined for a window with total lengh $L_s$ and window parameter $\alpha$ as
+\begin{equation}
+  \footnotesize
+w(s) =
+\begin{cases} 
+\frac{1}{2} \left[ 1 + \cos\left( \frac{2\pi}{\alpha L_s} \left( s - \frac{\alpha L_s}{2} \right) \right) \right], & 0 \leq t \leq \frac{\alpha L_s}{2}, \\
+1, & \frac{\alpha L_s}{2} < s < L_s - \frac{\alpha L}{2}, \\
+\frac{1}{2} \left[ 1 + \cos\left( \frac{2\pi}{\alpha L_s} \left( s - L_s + \frac{\alpha L_s}{2} \right) \right) \right], & L_s - \frac{\alpha L_s}{2} \leq s \leq L_s.
+\end{cases}
+\end{equation} 
+consisting of a central rectangular region and smoothing the SSD ends by a raised cosine function up to the second derivative.
+Jumps are present in the window function's second derivative at four locations: at the ends ($\vx_1, \vx_2$) and at the inner positions at the transition of the raised cosine and the rectangular region ($\vx_3$ and $\vx_4$).
+The locations are illustrated in Fig.~\ref{Fig:truncation} with a parametrization $s(\vxo)$.
+
+According to the foregoing these four discontinuities are the sources of diffractional waves.
+The jumps in the second derivative can be expressed as $\Delta w^{''}_{ss}(\vx_i) = (-1)^{i+1} \, \frac{2\pi^2}{\alpha^2 L^2}$ and the total diffractional contribution can be approximated as
+\begin{equation}
+  \small
+  P_{\mathrm{diffr}}(\vx,\omega) \sim \sum_{i = 1}^{4} (-1)^{i} \, \frac{2\pi^2}{\alpha^2 L_s^2} \frac{\overline{D}(\vx_i) \, G(\vx-\vx_i)}{\left(\ti k \left(\hks^P(\vx_i)+\hks^G(\vx-\vx_i)\right)\right)^3}   
+\end{equation}
+This, along with the driving function pre-equalization results in a frequency response of $\sim 1 / k^{2.5}$, being a significant gain in comparison with the  $\sim 1 / k^{0.5}$ response of the untapered case.
+
+The diffractional contribution for the synthesis scenario illustrated in Fig.~\ref{fig:wfs_components} is investigated in Fig.~\ref{fig:wfs_diffr_tapered} in details.
+It is verified that into the main lobe's direction ($\vhk^P(\vx_i)$) the analytical model is singular, yet it reflects the fact that most of the diffractional energy is propagating into this particular direction.
+For locations where the stationary position is far from diffractional sources the model gives a fair approximation for both the spatial distribution and the frequency response of the truncation artifacts. 
+
+\subsubsection{Application for an enclosing SSD}
+Finally the general case of an enclosing SSD synthesizing an unfocused source is investigated.
+Since $\hkn^P(\vxo)$ is present in the driving functions which vanishes towards the SSD end for an enclosing geometry, it is inherently ensured that the driving function is zero at the edge of the active SSD contour (refer to Fig.~\ref{Fig:geometry} for illustration). 
+This function, however, has jumps in its first derivative, giving rise to diffractional waves. 
+With other words $\hkn^P(\vxo)$ itself tapers the driving functions up to the first order.
+
+By applying the above theory it can be shown that in the present case the diffractional waves are driven with a jump in the tangential derivative of $\hkn^P$ at the endpoints which can be shown to equal to the local curvature of the SSD $\Delta \hat{k}^{P'}_{\mathrm{n}s}(\vx_i) = \kappa^{\mathrm{SSD}}(\vx_i)$.
+Again, the diffractional waves are directed mainly towards the local propagation direction of the virtual field at the end of the SSD and has an overall frequency response of $1/k^{1.5}$.
+% for the present case by denoting the endpoints as $\vx_1$ and $\vx_2$ the diffractional waves 
+%\begin{equation}
+%  \scriptsize
+%  P_{\mathrm{diffr}}(\vx,\omega) \sim \sum_{i = 1}^2 
+%  \frac{\Delta \hat{k}^{P'}_{\mathrm{n}s}(\vx_i)  w(\vxo) \sqrt{8\pi} \sqrt{\frac{ \rho^P_v \, \rho^G }{ \rho^P_v + \rho^G} } P(\vxo, \omega) \, G(\vx-\vx_i)}
+%  {\left(\ti k \right)^{1.5}\left( \left(\hks^P(\vx_i)+\hks^G(\vx-\vx_i)\right)\right)^2}.
+%\end{equation}
+%with $\Delta \hat{k}^{P'}_{\mathrm{n}s}$ being the jump in the tangential derivative of $\hkn^P$.
+
+Therefore, applying a smooth enclosing contour for WFS inherently reduces the frequency response of diffractional waves, which in the frequency range of interest is enough to make further tapering unnecessary.
+However, the above statement does not holds for focused virtual sources when without any further treatment a zeroth order discontinuity appears in the driving functions.
+
+\subsection{Evaluation of the synthesized field at an arbitrary receiver position}
+In the following section we derive an analytical expression for the synthesized field at an arbitrary receiver position $\vx = [x,\, y,\, 0]^{\mathrm{T}}$ located inside the listening region.
+
+The integral to evaluate is \eqref{eq:synth_field} with the driving function given by \eqref{eq:driv_fun}.
+It is assumed that the referencing function is set, with a predefined reference position $\vxref(\vxo)$ for each SSD element.
+
+Again, the SPA is applied to the integral along the horizontal dimension.
+Depending on the receiver position the stationary position $\vxo^*(\vx)$ is found where 
+\begin{equation}
+  \small
+  \vhk^P(\vxo^*(\vx)) = \vhk^G(\vx-\vxo^*(\vx)) \hspace{2mm} \rightarrow \hspace{2mm} \hks^P(\vxo^*(\vx)) = \hks^G(\vx-\vxo^*(\vx))
+\end{equation}
+holds. 
+This stationary position has to be found a-priori in order to estimate the synthesized field in the following.
+As illustrated in Fig.~\ref{Fig:geometry} due to the problem geometry all $\vx$, $\vxo^*$, $\vxref$, and for the case of a virtual point source $\vxs$ lie along the same line (with the direction vector given by $\vhk^P(\vxo^*(\vx))$).
+For the sake of brevity the dependency $\vxo^*(\vx)$ is not denoted explicitly in order to avoid notations like $\vxref(\vxo^*(\vx))$.
+
+In order to evaluate the horizontal integral the second derivative of its phase is required along the SSD w.r.t some parametrization $\mathbf{s}(\vxo)$, evaluated at the stationary position $\phi^{(P+G)}_{ss}(\vxo^*)$.
+Given by \eqref{eq:curvature_horiz} the required derivative is again given in terms of the horizontal curvatures/principal radii, exploting that at the stationary position $\hat{k}^P_{\mathrm{n}}(\vxo) - \hat{k}^G_{\mathrm{n}}(\vx-\vxo) = 0$ holds by definition, reading as
+{\fontsize{9pt}{\baselineskip}
+\selectfont
+\begin{multline}
+%  \phi^{(P+G)}_{ss}(\vxo^*) = -\hat{k}^P_{\mathrm{n}}(\vxo^*)^2\left(\frac{ \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*) }{\rho^P_h(\vxo^*) \, \rho^G(\vx-\vxo^*)}\right).
+  \phi^{(P+G)}_{ss}(\vxo^*) = 
+   -\hat{k}^P_{\mathrm{n}}(\vxo^*)^2\left(\frac{1}{\rho^P_h(\vxo^*)} + \frac{1}{\rho^G(\vx-\vxo^*)}\right).
+   \label{eq:tangent_plane}
+\end{multline}}
+
+This expression can be used in order to give an asymptotic approximation of  \eqref{eq:synth_field} by using the 1D SPA formula (given by \eqref{eq:SPA_def1}), resulting in
+%\begin{multline}
+%  P(\vx,\omega) =  w(\vxo^*) \sqrt{8\pi \ti k} \sqrt{\frac{ \rho^P_v(\vxo^*) \, \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxo^*) + \rho^G(\vxref(\vxo^*)-\vxo^*)} } \\ 
+%  \sqrt{\frac{2\pi}{\ti k \hat{k}^P_{\mathrm{n}}(\vxo^*)^2\left(\frac{ \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*) }{\rho^P_h(\vxo^*) \, \rho^G(\vx-\vxo^*)}\right)}}
+%  \hkn^P(\vxo^*) P(\vxo^*, \omega) G(\vx-\vxo^*).
+%\end{multline}
+\begin{multline}
+  \Psynth(\vx,\omega) \sim 4\pi w(\vxo^*)  \sqrt{\frac{ \rho^P_v(\vxo^*) \, \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxo^*) + \rho^G(\vxref(\vxo^*)-\vxo^*)} } \\ 
+  \sqrt{\frac{\rho^P_h(\vxo^*) \, \rho^G(\vx-\vxo^*)}{  \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*)}}
+   P(\vxo^*, \omega) G(\vx-\vxo^*).
+   \label{eq:amp_distribution}
+\end{multline}
+%\begin{multline}
+%  \Psynth(\vx,\omega) = w(\vxo^*)  \sqrt{\frac{ \rho^P_v(\vxo^*) \, \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxo^*) + \rho^G(\vxref(\vxo^*)-\vxo^*)} } \\ 
+%  \sqrt{\frac{\rho^P_h(\vxo^*) \, \rho^G(\vx-\vxo^*)}{  \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*)}}
+%   P(\vxo^*, \omega) \frac{\te^{-\ti k |\vx-\vxo^*|}}{|\vx-\vxo^*|}.
+%   \label{eq:amp_distribution}
+%\end{multline}
+
+In order to gain insight into the physical meaning of this formulation let's investigate the special case when $\vx = \vxref$, by substituting the exact form of the Green's function yielding
+\begin{multline}
+  \Psynth(\vx = \vxref,\omega) \sim w(\vxo^*)  
+  \overbrace{\sqrt{\frac{ \rho^P_v(\vxo^*) }{ \rho^P_v(\vxo^*) + |\vxref(\vxo^*)-\vxo^*|} } }^{1 + \Delta A^P_v/A^P_v(\vxo^*)}
+  \cdot \\ 
+  \cdot 
+  \underbrace{\sqrt{\frac{\rho^P_h(\vxo^*)}{  \rho^P_h(\vxo^*) + |\vxref(\vxo^*)-\vxo^*|}}}_{1 + \Delta A^P_h/A^P_h(\vxo^*)}
+  \underbrace{\te^{-\ti k |\vxref(\vxo^*)-\vxo^*|}}_{\Delta \phi^P}
+   \, P(\vxo^*, \omega).
+   \label{eq:Psynth_at_xref}
+\end{multline}
+Comparison with \eqref{eq:ray_tracing} reveals that the above formulation expresses the synthesized field in a ray tracing manner:
+the terms under the square roots are accounting for the relative amplitude change over propagation from $\vxo^*$ to $\vxref$ expressed in terms of the principal radii/curvatures.
+On the other hand, the exponential term expresses the phase change the ray undergoes over propagation.
+
+By utilizing \eqref{eq:ray_tracing} in order to express the target field at $\vx$ equation \eqref{eq:amp_distribution} can be rewritten in order to arrive at the final result
+%\begin{multline}
+%  P(\vx,\omega) = 
+%  \sqrt{\frac{ \rho^P_v(\vxo^*) }{ \rho^P_v(\vxo^*) + \rho^G(\vx-\vxo^*)} }
+%  \sqrt{\frac{\rho^P_h(\vxo^*)}{  \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*)}} \\
+%  \te^{-\ti k |\vx-\vxo^*|} P(\vxo^*, \omega) 
+%\end{multline}
+%\begin{multline}
+%  \Psynth(\vx,\omega) =   w(\vxo^*)  \sqrt{\frac{ \rho^P_v(\vxo^*) \, \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxo^*) + \rho^G(\vxref(\vxo^*)-\vxo^*)} } \\ 
+%  \sqrt{\frac{\rho^P_h(\vxo^*) \, \rho^G(\vx-\vxo^*)}{  \rho^P_h(\vxo^*) + \rho^G(\vx-\vxo^*)}}
+%   P(\vxo^*, \omega) \frac{\te^{-\ti k |\vx-\vxo^*|}}{\rho^G(\vx-\vxo^*)}
+%\end{multline}
+{\fontsize{8pt}{\baselineskip}
+\selectfont
+\begin{multline}
+  \Psynth(\vx,\omega) \sim  \underbrace{w(\vxo^*)
+  \sqrt{\frac{ \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxref(\vxo^*))} }
+  \sqrt{\frac{ \rho^P_v(\vx)}{ \rho^G(\vx-\vxo^*) } }}_{A_0(\vx)}
+   P(\vx,\omega)
+   \label{eq:WFS_amp_dist} 
+\end{multline}}
+with $A_0$ being the multiplicative amplitude deviation from the inteded field.
+
+To summarize the foregoing, in order to express the exact amplitude in an arbitrary receiver position, first the corresponding stationary SSD position has to be found.
+As the reference distance is known for the given stationary position, predefined in the WFS driving functions the amplitude deviation from the target sound field can be calculated by evaluating \eqref{eq:WFS_amp_dist}.
+
+The positions of amplitude correct synthesis are found for those positions $\vx$ where 
+\begin{equation}
+w(\vxo^*)
+\sqrt{\frac{ \rho^G(\vxref(\vxo^*)-\vxo^*) }{ \rho^P_v(\vxref(\vxo^*))} }
+\sqrt{\frac{ \rho^P_v(\vx)}{ \rho^G(\vx-\vxo^*) } } = 1
+\label{eq:correct_positions}
+\end{equation}
+holds.
+If no tapering is applied this yields $\vx = \vxref(\vxo^*)$, i.e. over the reference curve amplitude correct synthesis can be achieved within the validity of the SPA.
+This result has been already presented for the special case of the traditional WFS setup (synthesizing a virtual point source by using a linear SSD) in the related literature\cite{Verheijen1997:phd}.
+It should be emphasized that since SPA is applied to its leading order, therefore, correct synthesis refers to the perfect reproduction of the amplitude, the local propagation direction and the local wavefront curvature.
+
+In the following paragraphs simple expressions are given for this amplitude distribution in the special case of a virtual point source applying a linear and a circular SSD.
+\subsubsection{Application for a linear SSD}
+In case of a virtual point source \eqref{eq:WFS_amp_dist} is simply given as
+\begin{equation}
+  \Psynth(\vx,\omega) \sim w(\vxo^*) \, \sqrt{\frac{  |\vxref(\vxo^*)-\vxo^*| }{ |\vxref(\vxo^*)-\vxs|} } 
+  \sqrt{\frac{|\vx-\vxs|}{|\vx-\vxo^*|}} P(\vx,\omega).
+\end{equation}
+For the special case of a linear SSD, referencing the synthesis to a parallel reference line the similarities $\frac{  |\vxref(\vxo^*)-\vxo^*| }{ |\vx-\vxo^*|} = \frac{\yref}{y}$ and $\frac{|\vx-\vxs|}{|\vxref(\vxo^*)-\vxs|} = \frac{y-y_s}{\yref-y_s}$ hold.
+Furthermore, the reference position can be calculated as $\vxo^* = \left( y_0 - y_s \right)\frac{x-x_s}{y-y_s}$.
+The amplitude distribution is, therefore, given as
+\begin{equation}
+  \Psynth(\vx,\omega) \sim w\left( -y_s \frac{x-x_s}{y-y_s} \right) \, \sqrt{\frac{\yref}{y} \frac{y-y_s}{\yref-y_s}} 
+P(\vx,\omega).
+\label{eq:trad_25D_WFS_amp_dist}
+\end{equation}
+
+\begin{figure}
+  \begin{center}
+    \begin{minipage}[c]{0.52\columnwidth}
+      \vspace{0pt}
+      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/traditional_WFS_setup.png}
+        \scriptsize
+        \put(0,0){(a)}
+      \end{overpic}
+      \par % Ensure a paragraph break
+      \vspace*{22pt} % Force space between the two images
+      \par % Ensure a paragraph break
+      \begin{overpic}[width=1.1\linewidth,keepaspectratio]{figs/traditional_WFS_dA_est.png}
+        \scriptsize
+        \put(0,0){(b)}
+      \end{overpic}
+      \vspace{\baselineskip} % Adjust this to match the height of the right minipage
+    \end{minipage}
+    \hfill
+    \begin{minipage}[c]{0.4\columnwidth}
+      \vspace{-20pt}
+      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/traditional_WFS_dA_mes_1.png}
+        \scriptsize
+        \put(0,5){(c)}
+      \end{overpic}
+      \vspace{0pt}
+      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/traditional_WFS_dA_mes_2.png}
+        \scriptsize
+        \put(0,5){(d)}
+      \end{overpic}
+      \vspace{0pt}
+      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/traditional_WFS_dA_mes_3.png}
+        \scriptsize
+        \put(0,5){(e)}
+      \end{overpic}
+    \end{minipage}
+    \begin{minipage}[c]{0.96\columnwidth}
+    \vspace{-18pt}    
+   \begin{overpic}[width= \columnwidth]{figs/linear_wfs_transfer_taper_20.png}
+      \scriptsize
+      \put(0,5){(f)}
+    \end{overpic} 
+    \begin{overpic}[width= \columnwidth]{figs/linear_wfs_transfer_taper_50.png}
+      \scriptsize
+      \put(0,5){(g)}
+    \end{overpic} 
+   \end{minipage}
+  \end{center}
+  \vspace{-0pt}
+\caption{ Amplitude distribution of the synthesized field in case of synthesizing a virtual point source using a linear SSD with the length $L_x = 3~\mathrm{m}$.
+Fig.~(a) depicts the real part of the synthesized field at $f_0 = 1~\mathrm{kHz}$ along with the problem geometry.
+Fig.~(b) shows the estimated normalized amplitude distribution as given by \eqref{eq:trad_25D_WFS_amp_dist}.
+Fig.~(c-e) illustrate the measured normalized amplitude distribution by evaluating the synthesized field, calculated at $f_0 = 0.4,\, 1$ and $10~\mathrm{kHz}$ respectively.
+Fig.~(f-g) depict the frequency content of the synthesized field measured along the reference line inside the illuminated area, with tapering by a Tukey window, with the coefficient being $0.2$ (f) and $0.5$ (g).}
+	\label{Fig:trad_WFS_amp_dist}
+\end{figure}
+
+The resulting amplitude distribution along with the geometrical considerations are depicted in Fig.~\ref{Fig:trad_WFS_amp_dist}.
+For the simulations (a-e) a Tukey tapering window was applied with the tapering parameter set to $0.5$.
+In the following the error metric used for illustrations is defined as
+\begin{equation}
+  \epsilon = \left| 20\log_{10}\left(\frac{\Psynth(\vx,\omega)}{P(\vx,\omega)}\right) \right| = \left| 20\log_{10} A_0(\vx) \right|.
+\end{equation}
+The absolute value is taken in order to enhance the visibility of the positions of correct synthesis ($A_0(\vx) = 0$).
+
+Fig.~(b) shows the analytical ---frequency independent--- result described in \eqref{eq:trad_25D_WFS_amp_dist}, while Fig.~(c-e) depict the above expression with numerically evaluating the integral describing $\Psynth(\vx,\omega)$, illustrated with increasing frequency.
+
+The figures verify the validity of expression \eqref{eq:WFS_amp_dist} for sufficiently high frequencies, while for lower frequencies---as high frequency assumptions start to fail--- slight amplitude deviations occur.
+These errors can be attributed to two basic phenomena: to the position dependent decrease of the synthesis bandwidth, as explained in the upcoming sequel and to diffractional waves, causing a ripple in the sound field, enhanced towards lateral direction as discussed in the previous section.
+
+As a further observation, it is verified that the application of a tapering window modifies the resulting reference curve shape even in the limiting high frequency case in the tapering region: for the tapered case position of amplitude correct synthesis is given by the solution of \eqref{eq:correct_positions} for $\vx$.
+
+Figure (f-g) present the amplitude of the synthesized field as a function of frequency, measured along the reference line (above the physical length of the SSD) for tapering coefficients of 0.2 and 0.5.
+It is verified that in both cases amplitude correct synthesis may be achieved asymptotically over the reference line up to a given lateral position, with the ripple artifacts efficiently suppressed by tapering.
+On the other hand, it can be observed that applying a smoother tapering window ---besides decreasing the size of the illuminated region---heavily alters the lower frequency limit of synthesis even in the illuminated region.
+Even towards the frontal ($x=0$) direction, where the synthesis bandwidth is maximal---the lower frequency limit slightly increases due to smoother tapering, while towards lateral direction the synthesis bandwidth decreases rapidly.
+Therefore, the apparent decrease of the reference line's length, visible clearly from Figure (c-d-e) is mainly present due to this increase of the lower frequency limit of synthesis.
+In the follow up article these low frequency limits are investigated quantitatively, highlighting the connection of tapering window/referencing function and the low frequency limit of WFS.
+
+%Clearly, the bandwidth of synthesis is maximal in frontal position ($x = 0$), while the low frequency limit of synthesis is increase towards lateral directions:
+%as an example, at $\vx = \posvec{2}{1.5}{1}$ with tapering by $0.5$ the synthesized field reaches its asymptotical amplitude at around $1~\mathrm{kHz}$, below which audible low-frequency loss may be present.
+%
+%Furthermore, even in the frontal position the low-frequency limit of synthesis is increased (compare the approximate cut-off frequencies in Figure (f) and (g)): this means that although diffraction effects can be efficiently suppressed by applying tapering to the driving functions, in turn it not only narrows the active listening region, but even in the active listening region it increases the low frequency limit of synthesis.
+%Again, this effect is even more enhanced in case of virtual sources far from the SSD (e.g. a virtual plane plane).
+%In the next sections these low frequency limits are investigated quantitatively, highlighting the connection of tapering window/referencing function and the low frequency limit of WFS.
+
+\subsubsection{Application for a circular SSD}
+
+
+\begin{figure}
+  \begin{center}
+      \begin{overpic}[width=0.44\linewidth,keepaspectratio]{figs/circular_WFS_setup.png}
+        \scriptsize
+        \put(0,0){(a)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.53\linewidth,keepaspectratio]{figs/circular_WFS_dA_est.png}
+        \scriptsize
+        \put(0,0){(b)}
+      \end{overpic}
+      \\ \vspace{2mm}
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_dA_mes_1.png}
+        \scriptsize
+        \put(0,5){(c)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_dA_mes_2.png}
+        \scriptsize
+        \put(0,5){(d)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_dA_mes_3.png}
+        \scriptsize
+        \put(0,5){(e)}
+      \end{overpic}
+  \end{center}
+\caption{ Amplitude distribution of the synthesized field in case of synthesizing a virtual point source using a circular SSD with the length $R_{\mathrm{SSD}} = 2~\mathrm{m}$.
+Figure (a) depicts the real part of the synthesized field at $f_0 = 1~\mathrm{kHz}$ along with the problem geometry.
+Figure (b) shows the estimated normalized amplitude distribution as given by \eqref{eq:WFS_amp_dist}.
+Figure (c-e) illustrate the measured normalized amplitude distribution by evaluating the synthesized field, calculated at $f_0 = 0.4,\, 1$ and $10~\mathrm{kHz}$ respectively.}
+	\label{Fig:circular_WFS_amp_dist}
+\end{figure}
+
+As a further application example the synthesis of a virtual point source using a circular SSD is presented in Fig.~\ref{Fig:circular_WFS_amp_dist}.
+The reference distance was set identically to $|\vxref(\vxo^*)-\vxo^*| = r_{\mathrm{SSD}} = 1.5~\mathrm{m}$.
+In this case the stationary position for each receiver position $\vx$ has to be found numerically, before evaluating \eqref{eq:WFS_amp_dist}.
+Again, it is verified that for an arbitrary problem geometry the amplitude of the synthesized field can be accurately estimated in the high frequency region by \eqref{eq:WFS_amp_dist}.
+
+\section{Extension for focused sound fields}
+Under certain (high frequency) assumptions general WFS theory is capable of synthesizing virtual sources apparently originating from inside the listening region.
+This requires the focusing of acoustic energy towards a focus point and the resulting virtual source is usually referred to as a focused source.
+%The frequency range of validity for acoustic focusing is further elaborated in the subsequent sections. 
+
+The theoretical basics, and the perceptual and physical properties of synthesizing focused sources has been the subject of numerous studies since the early development of WFS theory \cite{Verheijen1997:phd, Start1997:phd, Spors2009focused, Wierstorf2013focused}.
+However, the suitable choice of the reference curve, the effect of truncation and tapering and the low frequency limits for the WFS of focused source has not been discussed in details in the related literature, along with a lack of explanation for the apparent enhanced ripples and the amplitude distribution of the synthesized field.
+In the following these aspects are discussed, with reformulating the basic involved formulations within the present theoretical framework.
+
+The focusing of acoustic energy is conventionally achieved by applying time reversal to the involved virtual source model, which results in a physical model, describing a point sink.
+In the frequency domain this yields taking the conjugate of the virtual field model, i.e. for an arbitrary target field, its focused version is given by
+\begin{equation}
+  \Pfoc(\vx,\omega) = P^*(\vx,\omega) = A(\vx)\, \te^{ \ti F k \phi^P(\vx)},
+\end{equation}
+where $F$ is a focused flag, being $1$ for an unfocused, and $-1$ for a focused synthesis scenario, with $\vhk^P \rightarrow F \vhk^P$.
+%Obviously, phase conjugation reverses the sign of the local wavenumber vector, which for the specific case of a focused point source is given by
+%\begin{equation}
+%  \vhk^P(\vx) = -\nabla_{\vx} \phi^{P^*}(\vx)  = \frac{\vxs-\vx}{|\vxs-\vx|}.
+%\end{equation}
+
+\subsection{Integral description of focused sources}
+By including focused sources into formulation \eqref{eq:KA_focused}, the Kirchhoff approximation can be generalized towards
+\begin{multline}
+  \Pfoc(\vx,\omega) \approx  -2 \oint_\Omega w(\vxo) \left( \frac{A^{P'}_{\mathrm{n}}(\vxo)}{A^P(\vxo)} - \ti k F \hkn(\vxo) \right) \cdot \\ 
+  A(\vxo)\, \te^{ \ti F k \phi^P(\vxo)} \, G(\vx-\vxo) \,\td S(\vxo).
+  \label{eq:KA_focused}
+\end{multline}
+Within the above integral formulation the focused flag can be expressed in terms of the local wavenumber vector measured along the integral contour:
+\begin{equation}
+  F = 
+  \begin{cases}
+    -1  \hspace{5mm} \text{if} \hspace{1cm} \hkn(\vxo) > 0 \text{ for all } \vxo \in \Omega \\
+    1   \hspace{5mm} \text{otherwise}.
+  \end{cases}
+\end{equation}
+For this focused case the windowing function has to be redefined, depending on the positions in the listening region where the virtual wave front should be reconstructed.
+By fixing a reference point to $\vxref$, and requiring the integral to describe the virtual source around the direction $\mathbf{k}_{\mathrm{s}} = \vxref-\vxs$ a feasible choice (which maximizes the listening region) is given by
+\begin{equation}
+  w(\vxo) = 
+  \begin{cases}
+    1  \hspace{5mm} \text{if} \hspace{1cm} \left< \hkn(\vxo) \cdot \mathbf{k}_{\mathrm{s}} \right> \geq 0, \\
+    0   \hspace{5mm} \text{otherwise}.
+  \end{cases}
+\end{equation}
+
+It is important to clarify a point regarding the enhanced ripples observed in focused WFS, to resolve a noted ambiguity in the literature \cite{Wierstorf2013focused}: 
+Due to physical restriction \eqref{eq:KA_focused} cannot describe a focused source mathematically correctly even in case of an integral path of an infinite plane, in which case the Rayleigh integral should hold with equality:
+\begin{itemize}
+\item For low frequencies/at the near field of the virtual source, where $\left|\frac{A^{P'}_{\mathrm{n}}(\vxo)}{A^P(\vxo)}\right|\gg \left|k \hkn(\vxo) \right|$, the phase of the integrand changes insignificantly along the SSD.
+As a result, no acoustic focusing can be performed in this low frequency region: in this case, the integral \eqref{eq:KA_focused} describes the sound field for an unfocused version of the virtual source, located behind the SSD.
+For a linear SSD it is an unfocused virtual point source, while for an arbitrary enclosing SSD some equivalent diverging field.
+\item In the high frequency region (where acoustic focusing can be performed) the integral description of focused waves into the lateral directions suffer from serious truncation artifacts in an arbitrary problem geometry: 
+The immediate surrounding of the virtual source into the lateral directions is reconstructed by secondary sources towards the ends of an enclosing SSD or by lateral SSD elements in a planar/linear SSD.
+As a result the diffractional waves arrive to the focus point with nearly the same amplitude as the virtual wavefront itself, when the involved (either 2D or 3D) integrals are evaluated numerically in the proximity of the virtual source unless proper tapering is applied.
+\end{itemize}
+
+
+%As a result diffractional 
+%  \begin{itemize}
+%    \item For an arbitrary enclosing integral surface the gradient of the target/virtual field does not vanish towards the edge of the active surface region ---unlike for the case of a non-focused case---.
+%    This may case heavy truncation artifacts when not treated properly, as discussed in the following.
+%    \item On the other hand, choosing the integral surface to an infinite plane, the resulting Rayleigh integral  could \textbf{theoretically} describe the focused field at an arbitrary $\vx$ in front of the virtual field.
+%    However, as soon as the Rayleigh integral is evaluated numerically (with truncated length), heavy truncation artifacts are present in the evaluated field, independently of the numerical integral's length.
+ %   This is due to the fact that by focusing waves towards the focus point, the edge of the integral path contributes to the immediate surrounding of the virtual source, reconstructing focused wave into lateral directions (with the length of the integral path only defining the most lateral reproducible direction).
+ %   As a result, also the diffractional waves emerging due to truncation arrive to the virtual source position with the same amplitude as the virtual field itself, creating an undamped comb filter in the proximity of the virtual source.
+ %   By moving the receiver position further from the focus point the frequency ringing becomes less enhanced, but still causing severe problem when compared with the nonfocused case.
+ % \end{itemize}
+%\end{itemize}
+
+%\begin{figure}
+%  \begin{center}
+ %   \begin{minipage}[c]{0.47\columnwidth}
+ %     \begin{overpic}[width=\linewidth,keepaspectratio]{figs/focused_transfer_Lx_10_dy_1.png}
+%!        \scriptsize
+%        \put(0,5){(a)}
+%      \end{overpic}
+%      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/focused_transfer_Lx_100_dy_1.png}
+%        \scriptsize
+%        \put(0,5){(b)}
+%      \end{overpic}
+%    \end{minipage}
+%    \hfill
+%    \begin{minipage}[c]{0.47\columnwidth}
+%      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/focused_transfer_Lx_10_dy_4.png}
+%        \scriptsize
+%        \put(0,5){(c)}
+%      \end{overpic}
+%      \begin{overpic}[width=\linewidth,keepaspectratio]{figs/focused_transfer_Lx_100_dy_4.png}
+%        \scriptsize
+%        \put(0,5){(d)}
+%      \end{overpic}
+%    \end{minipage}
+%  \end{center}
+%\caption{Focused}
+%	\label{Fig:focused_truncation}
+%\end{figure}
+%This effect is illustrated in Fig.~\ref{Fig:focused_truncation}, depicting the focused field (by evaluating the 2.5D Kirchhoff approximation) (a) and the measured frequency response for two different integration area and two receiver positions.
+
+\subsection{2.5D driving functions for focused sources}
+
+With keeping in mind the above statements 2.5D WFS driving functions can be obtained in the same manner as in the unfocused case by applying the SPA to \eqref{eq:KA_focused} along the vertical dimension.
+The second derivative is generalized towards
+\begin{equation}
+  \phi^{P+G''}_{zz} = -\left( \frac{1}{\rho^G(\vx-\vxo)} + \frac{F}{\rho^P_v(\vxo)} \right).
+\end{equation}
+Due to physical restrictions, between the virtual source and the SSD the focused waves propagate as a converging wave front towards the focus point, thus, the directional reproduction of the wavefront is not realizable.
+Therefore, we restrict our investigation to parts of the space where the wavefront has already passed the focal point, and it is already diverging, i.e. to  $\rho^G(\vx-\vxo) > \rho^P_v(\vxo)$, i.e. the second derivative reverses sign compared to the unfocused case.
+Taking all potential reversed signs into consideration the 2.5D WFS driving functions including focused source read as 
+%\begin{multline}
+%  \small
+%  D(\vxo,\omega) = w(\vxo) \sqrt{F 8\pi \ti k} \cdot
+%  \\  \cdot \sqrt{\frac{ F \rho^P_v(\vxo) \, \rho^G(\vxref(\vxo)-\vxo) }{ \rho^P_v(\vxo) + F \rho^G(\vxref(\vxo)-\vxo)} } F \hkn^P(\vxo) P(\vxo, \omega),
+%\end{multline}
+\begin{multline}
+  \small
+  D(\vxo,\omega) = w(\vxo) \sqrt{8\pi \ti k} \cdot
+  \\  \cdot \sqrt{\frac{ \rho^P_v(\vxo) \, \rho^G(\vxref(\vxo)-\vxo) }{ \rho^P_v(\vxo) + F \rho^G(\vxref(\vxo)-\vxo)} } \hkn^P(\vxo) P(\vxo, \omega).
+  \label{eq:foc_driv_fun}
+\end{multline}
+
+\subsection{Diffraction effects and amplitude distribution in the synthesized field}
+\begin{figure}
+  \begin{center}
+      \begin{overpic}[width=0.3\linewidth,keepaspectratio]{figs/Psynth_circular_full.png}
+        \scriptsize
+        \put(0,0){(a)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.3\linewidth,keepaspectratio]{figs/Psynth_circular_ideal.png}
+        \scriptsize
+        \put(0,0){(b)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.3\linewidth,keepaspectratio]{figs/Psynth_circular_diffr.png}
+        \scriptsize
+        \put(0,0){(c)}
+      \end{overpic}
+  \end{center}
+\caption{Components of the synthesized field in case of reproducing a focused point source with an untapered circular SSD.
+Figure (a) shows the total synthesized field, (b) shows the intended sound field calculated from \eqref{eq:WFS_amp_dist} and (c) depicts the diffractional contribution calculated as the difference of (a) and (b).}
+	\label{Fig:circular_WFS_focused_diffr}
+\end{figure}
+
+In order to evaluate the synthesized field in an arbitrary receiver position inside the listening region the same derivation may be carried out as for the unfocused case.
+
+The intended sound field is obtained by evaluating the integral description of the synthesized field around the stationary position.
+Eventually, in front of the virtual field the very same formulation holds as for the unfocused case: by accounting for the phase jump (via the change of sign of phase's second derivative) and the reversed propagation direction the synthesized field can be expressed as
+\begin{equation}
+  \small
+  \Psynth(\vx,\omega) \sim 
+  \begin{cases}
+    A_0(\vx)\,P(\vx,\omega)  \hspace{5mm} \text{if} \hspace{1cm} \left< \hkn(\vx) \cdot \mathbf{k}_{\mathrm{s}} \right> \geq 0, \\
+    \frac{1}{\ti}A_0(\vx)\,P^*(\vx,\omega)   \hspace{5mm} \text{otherwise},
+    \label{eq:WFS_foc_amp_dist}
+  \end{cases}
+\end{equation}
+with $A_0$ given in \eqref{eq:WFS_amp_dist}.
+
+For the diffractional contribution again, the methodology discussed in the foregoing holds and \eqref{eq:diffr_waves} can be used in order to express diffractional waves.
+It is important however, that for the focused case $\vhk^P(\vxo)$ is directed towards the focal point in an arbitrary synthesis geometry, meaning that the diffractional waves are also focused into this direction.
+Furthermore, the amplitude correction factor containing the reference distance in \eqref{eq:foc_driv_fun} is increasing dominantly into lateral directions, in order to contribute to lateral directions around the virtual source.
+As a result without the application of suitable tapering enhanced diffractional waves are present in the proximity of the focal point.  
+This statement is equivalent with the intuitive, qualitative explanation given in the previous section.
+
+The problem is illustrated in Fig.~\ref{Fig:circular_WFS_focused_diffr} depicting the structure of the synthesized field in case of a focused virtual point source, synthesized by a circular SSD. 
+It is highlighted that even in case of enclosing SSDs the driving function does not vanish inherently towards the SSD end (since $\hkn^P(\vxo)$ does not vanish), resulting in enhanced diffractional waves with the frequency response of $\sim 1/k^{0.5}$.
+This accents the requirement of the application of tapering window with introducing a smooth transition region.
+In the present example the synthesis is referenced with a fix reference distance $\rho(\vxref-\vxo) = R_{\mathrm{SSD}}$, resulting in an amplitude correct synthesis in the center of the array.
+In the related literature no accurate control of the synthesis amplitude has been discussed, which in some cases may result in slightly lower diffraction amplitude \footnote{In e.g. \cite{Spors2009focused} the reference distance can be proven to equal to $|\vxref(\vxo)-\vxo| = \rho^P(\vxo)/2$ }, however, as a cost in these cases no correct amplitude positions can be found in front of the virtual source. 
+As simple, exemplary tapering strategies the tapering window can be either chosen to be $w(\vxo) = \left< \hkn(\vxo) \cdot \mathbf{k}_{\mathrm{s}} \right>$ giving a simply implementable tapering window that has a discontinuity in its first derivative, or by applying a Tukey window, that's implementation may be more complicated for arbitrary shaped SSDs, but having a jump only in its second derivative (at four positions).
+
+
+\begin{figure}
+  \begin{center}
+      \begin{overpic}[width=0.44\linewidth,keepaspectratio]{figs/circular_WFS_setup_foc.png}
+        \scriptsize
+        \put(0,0){(a)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.53\linewidth,keepaspectratio]{figs/circular_WFS_dA_est_foc.png}
+        \scriptsize
+        \put(0,0){(b)}
+      \end{overpic}
+      \\ \vspace{2mm}
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_foc_dA_mes_1.png}
+        \scriptsize
+        \put(0,5){(c)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_foc_dA_mes_2.png}
+        \scriptsize
+        \put(0,5){(d)}
+      \end{overpic}
+      \hfill
+      \begin{overpic}[width=0.32\linewidth]{figs/circular_WFS_foc_dA_mes_3.png}
+        \scriptsize
+        \put(0,5){(e)}
+      \end{overpic}
+      \\
+      \vspace{2mm}
+      \begin{overpic}[width= \columnwidth]{figs/focused_vs_unfocused_freq.png}
+        \scriptsize
+        \put(0,5){(f)}
+      \end{overpic}   
+  \end{center}
+\caption{ Amplitude distribution of the synthesized field in case of synthesizing a focused virtual point source using a circular SSD with $R_{\mathrm{SSD}} = 2~\mathrm{m}$.
+Figure (a) depicts the real part of the synthesized field at $f_0 = 1~\mathrm{kHz}$.
+Figure (b) shows the estimated normalized amplitude distribution as given by \eqref{eq:WFS_foc_amp_dist}.
+Figure (c-e) illustrate the measured normalized amplitude distribution by evaluating the synthesized field, calculated at $f_0 = 0.4,\, 1$ and $10~\mathrm{kHz}$ respectively.
+Figure (f) shows the frequency response measured at the center of the SSD array with various tapering coefficients for the focused case and with no tapering applied in the unfocused case.}
+	\label{Fig:circular_WFS_amp_dist_foc}
+\end{figure}
+
+Fig.~\ref{Fig:circular_WFS_amp_dist_foc} presents the case of the application of a Tukey window with referencing the synthesis to the center of the array by setting $|\vxref-\vxo| = R_{\mathrm{SSD}}$.
+It is verified that in the high-frequency region the amplitude distribution is well approximated by \eqref{eq:WFS_amp_dist}.
+At lower frequencies even with applying a Tukey window, significant diffraction contribution is present in the listening region, the can be further investigated in Figure (f) depicting the measured frequency response in the center of the array.
+Again, this enhanced ripple artifact is due to the fact that diffractional waves are directed towards the focus point, located in the proximity of the receiver position.
+
+%\section{High frequency approximations in WFS theory}
+%The foregoing section described basic WFS theory with developing an expression for the amplitude of the snythesized field, all by assuming high frequency conditions holding inherently.
+%In the following these high frequency 
+%\subsection{The Kirchhoff approximation}
+%\subsection{The far field assumption}
+%\subsection{Validity of the vertical SPA}
+%\subsection{Validity of the horizontal SPA}
+%\section{Application examples}
+%\subsection{Application for a linear SSD}
+%\subsection{Application for a circular SSD}
+%\subsection{Application for a spherical SSD}
+
+\section{Conclusion}
+In this paper we have presented an asymptotic analysis of the integral-based formulation of Wave Field Synthesis, with a focus on understanding diffraction effects and amplitude errors in synthesized sound fields. 
+It was highlighted that the derivation of WFS driving functions via asymptotic approximations yields a formulation equivalent with the ray based description of the synthesis problem.
+By applying the stationary phase approximation to the driving function integrals, we derived analytical expressions that separate the reproduced field into the intended (stationary-phase) contribution and additional diffraction terms arising from integration boundaries and discontinuities. 
+These results explicitly show how and why the classical 2.5D WFS driving functions produce a correct sound field only on a reference line, while predicting systematic amplitude deviations and the appearance of secondary (diffracted) wavefronts. 
+Moreover, by extending the analysis to focused source scenarios, we have shown that the prominent ripple artifacts previously reported for focused sources are indeed explained by the same diffraction mechanism, thereby resolving a noted ambiguity in earlier WFS literature.
+
+The main findings are concluded as follows:
+An analytical formulation was given for the amplitude distribution of the intended synthesized field inside the entire listening region.
+Inside the active listening region diffractional waves occur in an arbitrary synthesis geometry, that are mainly radiating towards the virtual source propagation direction.
+For unfocused virtual fields this manifests in diffractional waves radiating mainly into lateral directions, away from typical listening positions.
+On the other hand, for focused scenarios diffractional waves are focused towards the virtual source, and potentially towards the listener.
+The diffractional waves can be effectively suppressed by applying a tapering window, feasibly being continuous up to a high derivative, along with choosing a suitable referencing function, that itself can smooth the driving function towards the SSD endpoints. 
+However, both tapering and poorly choosen referencing scheme not only narrows the illuminated area, but can significantly increase the lower frequency bound of WFS, as it is detailed in the upcoming sequel for the present article.
+%Finally, the introduced generalized WFS theory was extended for focused virtual sources in order to allow the control of synthesis amplitude by choosing a suitable reference curve.
+
+Our theoretical findings were corroborated by simulations for typical loudspeaker array geometries (linear and circular): in all cases, the predicted amplitude mismatches and ripple patterns were observed, demonstrating that the limited spatial accuracy is an inherent consequence of the WFS approximations rather than a peculiarity of a specific setup. 
+%
+
+\section*{Acknowledgments}
+This work was supported by the János Bolyai Research Scholarship of the Hungarian Academy of Science and by the OTKA PD-143129 and OTKA K-143436 grants.
+
+
+{
+\input{hessian}
+
+\input{diffraction_waves}
+
+%\input{pi_per_four_derivs}
+%\paragraph{Arbitrary virtual source}
+
+\bibliographystyle{IEEEtran}
+\bibliography{dissertation}
+
+
+%\newpage
+
+%\section{Biography Section}
+
+
+
+
+\vfill
+
+\end{document}
+
+

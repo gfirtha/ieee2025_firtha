@@ -1,0 +1,80 @@
+\appendix[Physical interpretation of the phase function's Hessian]
+\label{app:hessian}
+This section briefly summarizes the physical interpretation of the phase function's Hessian and formulates directional second derivatives for \eqref{eq:KA} in the present geometry in order to evaluate it by the SPA.
+For further elaboration refer to \cite[App. B]{Firtha2019phd}.
+
+Assume the phase of the arbitrary field given by \eqref{eq:general_field}!
+The 3x3 Hessian of the phase function $\mH^P(\vx)$ (containing the second derivatives, w.r.t combinations of $x,y,z$) is given by
+\begin{equation}
+  \mH^P(\vx) = -
+  \begin{bmatrix} 
+    \phi^{P''}_{xx}(\vx,\omega) & \phi^{P''}_{xy}(\vx,\omega) & \phi^{P''}_{xz}(\vx,\omega) \\[.7em]
+    \phi^{P''}_{xy}(\vx,\omega) & \phi^{P''}_{yy}(\vx,\omega) & \phi^{P''}_{yz}(\vx,\omega) \\[.7em]
+    \phi^{P''}_{xz}(\vx,\omega) & \phi^{P''}_{yz}(\vx,\omega) & \phi^{P''}_{zz}(\vx,\omega) \\[0.5em]    \end{bmatrix}.
+\end{equation}
+The matrix can be written in the spectral form of
+\begin{equation}
+  \mH^P(\vx) = - \underbrace{\begin{bmatrix} \mathbf{v}^P_1 \, |\, \mathbf{v}^P_2 \\\end{bmatrix}}_{\mathbf{V}^P(\vx)} 
+  \begin{bmatrix} \kappa^P_1 & 0 \\[.0em] 0 & \kappa^P_2 \\[0.0em] \end{bmatrix}
+  \begin{bmatrix} \mathbf{v}^P_1 \, | \, \mathbf{v}^P_2 \\\end{bmatrix}^{\mathrm{T}},
+\end{equation}
+with 
+\begin{itemize}
+  \item $\kappa^P_{1,2} = \frac{1}{\rho^P_{1,2}}$ being the maximal and minimal curvatures of the wavefront, and $\rho^P_{1,2}$ being the corresponding principal radii, being the radii of the maximal and minimal osculating circles, tangential with the wavefront at $\vx$.
+  \item $\mathbf{v}^P_{1,2}$ are the corresponding tangential vectors at $\vx$, pointing into the direction of the minimal and maximal curvatures, being both perpendicular to $\vhk^P(\vx)$.
+  \item The third eigenvector is given by the local wavenumber vector itself, with the corresponding eigenvalue being 0, explaining the dimensionality reduction of the matrix from 3x3 to 2x2.
+\end{itemize}
+The geometrical properties are illustrated in Figure \ref{Fig:local_wave_curvature}.
+
+In the present problem we require the phase function's Hessian for the integrand of the Kirchhoff approximation \eqref{eq:KA}, given by
+{\fontsize{8pt}{\baselineskip}
+\selectfont
+\begin{multline}
+  \mH^{P+G}(\vxo) = \\
+  -\mathbf{V}^P(\vxo)
+  \underbrace{\begin{bmatrix} \frac{1}{\rho^G_h(\vx-\vxo)} + \frac{1}{\rho^P_h(\vxo)} & 0 \\[.0em] 0 & \frac{1}{\rho^G_v(\vx-\vxo)} + \frac{1}{\rho^P_v(\vxo)} \\[0.0em] \end{bmatrix}}_{\boldsymbol{\kappa}^{P+G}(\vxo)}
+  \mathbf{V}^P(\vxo)^{\mathrm{T}}.
+\end{multline}}
+In this expression it was exploited that propagating by the Green's function does not change the wavefront's tangential vectors $\mathbf{V}^P$, hence $\mathbf{V}^{P+G} = \mathbf{V}^P$ holds. 
+Furthermore, we restricted our investigation to sound fields with $\hat{k}^P_z = 0$ in which case the principal curvatures simplify to horizontal and vertical components, with the corresponding tangential vectors of $\mathbf{V}^P(\vxo) = \begin{bmatrix} \mathbf{t}^P(\vxo) & \hat{\mathbf{z}} \\\end{bmatrix}$.
+Here $\mathbf{t}^P(\vxo)$ denotes the tangential vector to the wavefront in the horizontal plane and $\hat{\mathbf{z}}$ is the vertical unit vector.
+
+With the above mathematical description we can simply formulate cases when the second derivative into an arbitrary direction $\mathbf{v}_0(\vxo)$ is required by evaluating
+\begin{multline}
+  \phi^{P+G''}_{v_0v_0} =
+-  \mathbf{v}_0(\vxo)^{\mathrm{T}}\left( \mathbf{V}^P(\vxo) \boldsymbol{\kappa}(\vxo)^{P+G} \mathbf{V}^P(\vxo)^{\mathrm{T}} \right)\mathbf{v}_0(\vxo).
+\end{multline}
+
+In practical cases 
+
+\paragraph{Application for the vertical SPA}
+For the case of the vertical SPA $\mathbf{v}_0(\vxo) = \hat{\mathbf{z}}$ is given.
+Since $\mathbf{v}_0(\vxo)^{\mathrm{T}} \mathbf{V}^P(\vxo) = [0,1]$, therefore, the required derivative is simply given as
+\begin{equation}
+  \phi^{P+G''}_{zz} = -\left( \frac{1}{\rho^G_v(\vx-\vxo)} + \frac{1}{\rho^P_v(\vxo)}\right).
+  \label{eq:curvature_vert}
+\end{equation}
+
+\paragraph{Application for the horizontal SPA}
+%On the other hand, when the second derivative is required in the horizontal plane, in case of an arbitrary shaped SSD contour the SSD curvature has to be taken into account.
+Assume that we have an arc length parametrization of the contour given by $s(\vxo)$, with the tangential vector (first derivative of the contour) given by $\mathbf{s}(\vxo)$ and the curvature function (second derivative) by $\kappa_{\mathrm{SSD}}(\vxo) = 1 / \rho_{\mathrm{SSD}}(\vxo)$.  
+In this geometry the second derivative along $s(\vxo)$ can be written by applying the chain rule to $\phi(s(\vxo))$ as
+\begin{multline}
+  \phi_{ss} = \mathbf{s}(\vxo)^{\mathrm{T}} \, \mH(\vx) \, \mathbf{s}(\vxo) + 2\kappa_{\mathrm{SSD}}(\vxo) \left< \Delta \phi(\vxo) \cdot \mathbf{n}(\vxo) \right>
+\end{multline}
+
+For the first term by using the spectral decomposition of the Hessian, $\mathbf{s}(\vxo)^{\mathrm{T}} \mathbf{V}^P(\vxo) = [\left<\mathbf{s}(\vxo) \cdot \mathbf{v}_1^P(\vxo)\right>,0]$ holds, i.e.
+\begin{multline}
+  \small
+  \mathbf{s}(\vxo)^{\mathrm{T}} \, \mH(\vx) \, \mathbf{s}(\vxo)  = \\ =
+  -\left<\mathbf{s}(\vxo) \cdot \mathbf{v}_1^P(\vxo)\right>^2 \left(\frac{1}{\rho^G_h(\vx-\vxo)} + \frac{1}{\rho^P_h(\vxo)} \right).
+\end{multline}
+Finally, it can be realized that the inner product can be written in terms of horizontal, perpendicular components (which for $\mathbf{v}_1^P(\vxo)$ is given by $\vhk^P(\vxo)$) the equation takes the form
+\begin{multline}
+  \phi^{P+G''}_{ss} = 
+   -\hat{k}_{\mathrm{n}}(\vxo)^2 \left(\frac{1}{\rho^G_h(\vx-\vxo)} + \frac{1}{\rho^P_h(\vxo)} \right) - \\
+   -2 \left( \hat{k}^P_{\mathrm{n}}(\vxo) - \hat{k}^G_{\mathrm{n}}(\vx-\vxo)\right) \kappa_{\mathrm{SSD}}(\vxo).
+   \label{eq:curvature_horiz}
+\end{multline}
+Note that the above equation is equivalent with the result given by \cite[Eq. 8.4.22.]{Bleistein1984}, where the local coordinate system is chosen to coincide with the principal curvatures of the SSD specializing the virtual field to be a point source, while here the SSD is invariant along the $z$-dimension, allowing to fix the coordinate frame to the virtual source.  
+
